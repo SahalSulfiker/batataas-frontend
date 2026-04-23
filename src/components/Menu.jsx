@@ -3,8 +3,8 @@ import MenuCard from './MenuCard';
 import { useReveal } from '../hooks/useReveal';
 
 export default function Menu({ menuData }) {
-    const categories = menuData?.categories || [];
-    const items = menuData?.items || {};
+    const categories = useMemo(() => menuData?.categories || [], [menuData]);
+    const items = useMemo(() => menuData?.items || {}, [menuData]);
     const [active, setActive] = useState('All');
     const ref = useReveal();
 
