@@ -9,23 +9,23 @@ export const FALLBACK_MENU = {
             { id: "beef-smash-loaded", name: "Smash Beef Loaded Fries", price: 230, desc: "Smashed beef, melted cheese and signature sauce over fries.", image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=900&q=80" },
         ],
         "Snacks": [
-            { id: "exotic-fries", name: "Exotic French Fries", price: 80, desc: "Golden, crispy fries served with your favorite dipping sauce.", image: "https://images.pexels.com/photos/19264378/pexels-photo-19264378.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" },
-            { id: "cheesy-fries", name: "Cheesy French Fries", price: 135, desc: "Crispy fries loaded with molten cheese and dipping sauce.", image: "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=900&q=80" },
+            { id: "exotic-fries", name: "Exotic French Fries", price: 80, desc: "Golden, crispy fries served with your favorite dipping sauce.", image: "/images/exotic french.jpeg" },
+            { id: "cheesy-fries", name: "Cheesy French Fries", price: 135, desc: "Crispy fries loaded with molten cheese and dipping sauce.", image: "/images/cheesy fries.jpeg" },
             { id: "peri-fries", name: "Peri Peri French Fries", price: 90, desc: "Golden fries tossed in fiery peri peri seasoning.", image: "https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" },
         ],
         "Bites": [
-            { id: "nugget-bites", name: "Nugget Bites", price: 130, desc: "Crispy chicken nuggets tossed in signature peri peri seasoning.", image: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=900&q=80" },
-            { id: "peri-wings", name: "Peri Wings", price: 150, desc: "Spicy peri peri wings — a fiery combo you can't resist.", image: "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?auto=format&fit=crop&w=900&q=80" },
+            { id: "nugget-bites", name: "Nugget Bites", price: 130, desc: "Crispy chicken nuggets tossed in signature peri peri seasoning.", image: "/images/nuggets.jpeg" },
+            { id: "peri-wings", name: "Peri Wings", price: 150, desc: "Spicy peri peri wings — a fiery combo you can't resist.", image: "/images/8pcs wings.jpeg" },
         ],
         "Fried Chicken": [
-            { id: "fc-2pc", name: "2 Piece Fried Chicken", price: 160, desc: "Two pieces of golden, juicy hand-breaded fried chicken.", image: "https://images.pexels.com/photos/33037756/pexels-photo-33037756.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" },
+            { id: "fc-2pc", name: "2 Piece Fried Chicken", price: 160, desc: "Two pieces of golden, juicy hand-breaded fried chicken.", image: "/images/2pcs.jpeg" },
             { id: "fc-5pc", name: "5 Piece Fried Chicken", price: 270, desc: "Five pieces of golden, crunchy fried chicken to share.", image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=900&q=80" },
-            { id: "fc-10pc", name: "10 Piece Fried Chicken", price: 520, desc: "A full bucket of crispy golden fried chicken.", image: "https://images.unsplash.com/photo-1513185041617-8ab03f83d6c5?auto=format&fit=crop&w=900&q=80" },
+            { id: "fc-10pc", name: "10 Piece Fried Chicken", price: 520, desc: "A full bucket of crispy golden fried chicken.", image: "/images/10ocs.jpeg" },
             { id: "fc-20pc", name: "20 Piece Fried Chicken", price: 1020, desc: "The ultimate feast — twenty pieces for the whole squad.", image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=900&q=80" },
         ],
         "Chicken Strips": [
-            { id: "cs-4pc", name: "4 Piece Chicken Strips", price: 160, desc: "Tender, crispy chicken strips with dipping sauce.", image: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=80" },
-            { id: "cs-8pc", name: "8 Piece Chicken Strips", price: 300, desc: "Eight golden strips — crispy on the outside, juicy inside.", image: "https://images.unsplash.com/photo-1626082936935-c5d15b5c7d2a?auto=format&fit=crop&w=900&q=80" },
+            { id: "cs-4pc", name: "4 Piece Chicken Strips", price: 160, desc: "Tender, crispy chicken strips with dipping sauce.", image: "/images/4pcs strips.jpeg" },
+            { id: "cs-8pc", name: "8 Piece Chicken Strips", price: 300, desc: "Eight golden strips — crispy on the outside, juicy inside.", image: "/images/8pcs wings.jpeg" },
         ],
         "Burgers": [
             { id: "zinger", name: "Zinger Burger", price: 150, desc: "Crispy spiced chicken fillet with fresh lettuce and creamy mayo.", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80" },
@@ -49,7 +49,7 @@ export const FALLBACK_MENU = {
         "Add-ons": [
             { id: "peri-seasoning", name: "Peri Peri Seasoning", price: 10, desc: "Extra peri peri punch for your fries.", image: "https://images.unsplash.com/photo-1599050751795-6cdaafbc2319?auto=format&fit=crop&w=900&q=80" },
             { id: "cheese-slice", name: "Cheese Slice", price: 20, desc: "Add a layer of melty cheese.", image: "https://images.unsplash.com/photo-1552767059-ce182ead6c1b?auto=format&fit=crop&w=900&q=80" },
-            { id: "extra-wings", name: "Extra Wings", price: 35, desc: "Two extra peri peri wings on the side.", image: "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?auto=format&fit=crop&w=900&q=80" },
+            { id: "extra-wings", name: "Extra Wings", price: 35, desc: "Two extra peri peri wings on the side.", image: "/images/wings" },
         ],
     },
 };
