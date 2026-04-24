@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from './ui/sheet';
-import { Plus, Minus, Trash2, Truck, Store, ShoppingBag, Loader2, ArrowUpRight, CheckCircle2, Copy, CreditCard, Banknote, Wallet } from 'lucide-react';
+import { Plus, Minus, Trash2, Truck, Store, ShoppingBag, Loader2, CheckCircle2, Copy, CreditCard, Banknote, Wallet } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 const BACKEND = process.env.REACT_APP_BACKEND_URL;
@@ -14,9 +14,21 @@ const BRANCH_OPTIONS = [
     { id: 'mampad', label: 'Mampad · Main Road' },
 ];
 
+function loadRazorpayScript() {
+    return new Promise((resolve) => {
+        if (document.getElementById('razorpay-script')) { resolve(true); return; }
+        const script = document.createElement('script');
+        script.id = 'razorpay-script';
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
+}
+
 export default function CartSheet() {
     const { items, inc, dec, remove, clear, total, count, orderType, setOrderType, isOpen, setIsOpen } = useCart();
-    const [step, setStep] = useState('cart'); // cart | details | placed
+    const [step, setStep] = useState('cart');
     const [form, setForm] = useState({ name: '', phone: '', branch: '', address: '', notes: '' });
     const [paymentMethod, setPaymentMethod] = useState('online');
     const [loading, setLoading] = useState(false);
@@ -24,7 +36,6 @@ export default function CartSheet() {
 
     const update = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
-    // If order type changes, reset incompatible payment choice
     const offlineKey = orderType === 'delivery' ? 'cod' : 'counter';
     const offlineLabel = orderType === 'delivery' ? 'Cash on Delivery' : 'Pay at Counter';
     const OfflineIcon = orderType === 'delivery' ? Banknote : Wallet;
@@ -60,9 +71,44 @@ export default function CartSheet() {
                 customer_address: form.address,
                 notes: form.notes,
             });
-            setPlaced(resp.data);
-            setStep('placed');
-            toast.success('Order placed successfully!');
+
+            const order = resp.data;
+
+            if (effectivePayment === 'online' && order.razorpay_order_id) {
+                const loaded = await loadRazorpayScript();
+                if (!loaded) { toast.error('Failed to load payment gateway. Please try again.'); setLoading(false); return; }
+
+                const options = {
+                    key: order.razorpay_key_id,
+                    amount: order.amount_paise,
+                    currency: 'INR',
+                    name: 'Bataatas',
+                    description: `Order #${order.short_id}`,
+                    order_id: order.razorpay_order_id,
+                    prefill: {
+                        name: form.name,
+                        contact: form.phone,
+                    },
+                    theme: { color: '#C47B3E' },
+                    handler: function () {
+                        setPlaced(order);
+                        setStep('placed');
+                        toast.success('Payment successful! Order placed.');
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            toast.error('Payment cancelled. Your order was not placed.');
+                        }
+                    }
+                };
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+                setLoading(false);
+            } else {
+                setPlaced(order);
+                setStep('placed');
+                toast.success('Order placed successfully!');
+            }
         } catch (e) {
             toast.error(e?.response?.data?.detail || 'Order failed. Please try again.');
         } finally {
@@ -114,37 +160,20 @@ export default function CartSheet() {
                             </button>
                         </div>
 
-                        {placed.payment_method === 'online' && placed.payment_link ? (
-                            <div className="rounded-2xl bg-white border border-brand-line p-5">
-                                <div className="font-body text-xs uppercase tracking-widest text-brand-muted mb-2">Amount to pay · Online</div>
-                                <div className="font-display text-4xl text-brand-ink">₹{placed.amount}</div>
-                                <a
-                                    href={placed.payment_link}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    data-testid="pay-on-razorpay-btn"
-                                    className="mt-4 w-full inline-flex items-center justify-center gap-2 px-5 py-4 rounded-full bg-brand-tan text-white font-body font-bold uppercase tracking-widest text-sm hover:bg-brand-tanDark active:scale-[0.98] transition-all"
-                                >
-                                    Pay ₹{placed.amount} on Razorpay <ArrowUpRight size={16} />
-                                </a>
-                                <p className="mt-3 font-body text-[11px] text-brand-muted leading-relaxed">
-                                    Please mention Order <span className="font-bold">#{placed.short_id}</span> as a note on the Razorpay page.
-                                </p>
+                        <div className="rounded-2xl bg-white border border-brand-line p-5">
+                            <div className="flex items-center gap-2 text-brand-tan font-body text-xs uppercase tracking-widest font-bold">
+                                {placed.payment_method === 'cod' ? <Banknote size={15}/> : placed.payment_method === 'counter' ? <Wallet size={15}/> : <CreditCard size={15}/>}
+                                {placed.payment_method === 'cod' ? 'Cash on Delivery' : placed.payment_method === 'counter' ? 'Pay at Counter' : 'Paid Online'}
                             </div>
-                        ) : (
-                            <div className="rounded-2xl bg-white border border-brand-line p-5">
-                                <div className="flex items-center gap-2 text-brand-tan font-body text-xs uppercase tracking-widest font-bold">
-                                    {placed.payment_method === 'cod' ? <Banknote size={15}/> : <Wallet size={15}/>}
-                                    {placed.payment_method === 'cod' ? 'Cash on Delivery' : 'Pay at Counter'}
-                                </div>
-                                <div className="mt-2 font-display text-4xl text-brand-ink">₹{placed.amount}</div>
-                                <p className="mt-3 font-body text-sm text-brand-muted">
-                                    {placed.payment_method === 'cod'
-                                        ? 'Please keep the exact amount ready. Our delivery partner will collect it on arrival.'
-                                        : 'Please pay at the counter when you arrive. Your order will be ready for pickup/seating.'}
-                                </p>
-                            </div>
-                        )}
+                            <div className="mt-2 font-display text-4xl text-brand-ink">₹{placed.amount}</div>
+                            <p className="mt-3 font-body text-sm text-brand-muted">
+                                {placed.payment_method === 'cod'
+                                    ? 'Please keep the exact amount ready. Our delivery partner will collect it on arrival.'
+                                    : placed.payment_method === 'counter'
+                                    ? 'Please pay at the counter when you arrive.'
+                                    : 'Payment received successfully! Thank you.'}
+                            </p>
+                        </div>
 
                         <button onClick={reset} data-testid="place-another-order-btn" className="w-full px-5 py-3 rounded-full bg-brand-ink text-brand-cream font-body font-bold uppercase tracking-widest text-xs hover:bg-brand-tan transition-colors">
                             Place another order

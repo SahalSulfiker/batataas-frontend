@@ -3,10 +3,10 @@ export const FALLBACK_MENU = {
     categories: ["Signature", "Snacks", "Bites", "Fried Chicken", "Chicken Strips", "Burgers", "Drinks", "Soft Drinks", "Add-ons"],
     items: {
         "Signature": [
-            { id: "chicken-loaded", name: "Chicken Loaded Fries", price: 180, desc: "Crispy fries smothered with spicy chicken, cheese and sauces.", image: "https://images.pexels.com/photos/20535803/pexels-photo-20535803.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" },
-            { id: "sausage-loaded", name: "Sausage Loaded Fries", price: 200, desc: "Loaded with juicy sausages, cheese, and smoky sauces.", image: "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?auto=format&fit=crop&w=900&q=80" },
-            { id: "machos", name: "Machos", price: 210, desc: "Nacho-style loaded fries — cheesy, crunchy, irresistible.", image: "https://images.unsplash.com/photo-1582169296194-e4d644c48063?auto=format&fit=crop&w=900&q=80" },
-            { id: "beef-smash-loaded", name: "Smash Beef Loaded Fries", price: 230, desc: "Smashed beef, melted cheese and signature sauce over fries.", image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=900&q=80" },
+            { id: "chicken-loaded", name: "Chicken Loaded Fries", price: 180, desc: "Crispy fries smothered with spicy chicken, cheese and sauces.", image: "/images/chicken loaded fries.jpg" },
+            { id: "sausage-loaded", name: "Sausage Loaded Fries", price: 200, desc: "Loaded with juicy sausages, cheese, and smoky sauces.", image: "/images/sausage loaded fries.jpeg" },
+            { id: "machos", name: "Machos", price: 210, desc: "Nacho-style loaded fries — cheesy, crunchy, irresistible.", image: "/images/machos.jpeg" },
+            { id: "beef-smash-loaded", name: "Smash Beef Loaded Fries", price: 230, desc: "Smashed beef, melted cheese and signature sauce over fries.", image: "/images/beef loaded fries.jpeg" },
         ],
         "Snacks": [
             { id: "exotic-fries", name: "Exotic French Fries", price: 80, desc: "Golden, crispy fries served with your favorite dipping sauce.", image: "/images/exotic french.jpeg" },
@@ -19,7 +19,7 @@ export const FALLBACK_MENU = {
         ],
         "Fried Chicken": [
             { id: "fc-2pc", name: "2 Piece Fried Chicken", price: 160, desc: "Two pieces of golden, juicy hand-breaded fried chicken.", image: "/images/2pcs.jpeg" },
-            { id: "fc-5pc", name: "5 Piece Fried Chicken", price: 270, desc: "Five pieces of golden, crunchy fried chicken to share.", image: "/images/5 piece fried chicken.jpg" },
+            { id: "fc-5pc", name: "5 Piece Fried Chicken", price: 270, desc: "Five pieces of golden, crunchy fried chicken to share.", image: "/images/5pcs fried chckn.jpeg" },
             { id: "fc-10pc", name: "10 Piece Fried Chicken", price: 520, desc: "A full bucket of crispy golden fried chicken.", image: "/images/10ocs.jpeg" },
             { id: "fc-20pc", name: "20 Piece Fried Chicken", price: 1020, desc: "The ultimate feast — twenty pieces for the whole squad.", image: "/images/20 piece fried chicken.jpg" },
         ],
@@ -44,7 +44,7 @@ export const FALLBACK_MENU = {
         ],
         "Soft Drinks": [
             { id: "pepsi", name: "Pepsi", price: 20, desc: "Chilled Pepsi — the classic fizz.", image: "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=900&q=80" },
-            { id: "7up", name: "7UP", price: 20, desc: "Crisp, lemony 7UP — ice cold.", image: "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&w=900&q=80" },
+            { id: "7up", name: "7UP", price: 20, desc: "Crisp, lemony 7UP — ice cold.", image: "/images/7 up.jpg" },
         ],
         "Add-ons": [
             { id: "peri-seasoning", name: "Peri Peri Seasoning", price: 10, desc: "Extra peri peri punch for your fries.", image: "/images/peri peri seasoning.jpg" },
