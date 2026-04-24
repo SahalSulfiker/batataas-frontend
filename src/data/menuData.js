@@ -49,7 +49,7 @@ export const FALLBACK_MENU = {
         "Add-ons": [
             { id: "peri-seasoning", name: "Peri Peri Seasoning", price: 10, desc: "Extra peri peri punch for your fries.", image: "/images/peri peri seasoning.jpg" },
             { id: "cheese-slice", name: "Cheese Slice", price: 20, desc: "Add a layer of melty cheese.", image: "/images/cheese slice.jpg" },
-            { id: "extra-wings", name: "Extra Wings", price: 35, desc: "Two extra peri peri wings on the side.", image: "/images/wings" },
+            { id: "extra-wings", name: "Extra Wings", price: 35, desc: "Two extra peri peri wings on the side.", image: "/images/wings.jpeg" },
         ],
     },
 };
