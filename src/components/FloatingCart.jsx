@@ -3,7 +3,10 @@ import { ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function FloatingCart() {
-    const { count, setIsOpen, total } = useCart();
+    const { count, setIsOpen, total, isOpen } = useCart();
+    
+    if (isOpen) return null;
+    
     return (
         <button
             data-testid="cart-toggle-btn"

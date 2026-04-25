@@ -102,6 +102,7 @@ export default function CartSheet() {
                     }
                 };
                 const rzp = new window.Razorpay(options);
+                setIsOpen(false)
                 rzp.open();
                 setLoading(false);
             } else {

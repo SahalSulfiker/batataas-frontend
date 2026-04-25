@@ -2,7 +2,7 @@ import React from 'react';
 import { useReveal } from '../hooks/useReveal';
 
 const DIRECTORS = [
-    { name: 'Inthisham Usman', role: 'Co-Founder & Director', img: '/images/usman.jpeg' },
+    { name: 'Inthisham Usman', role: 'Founder & Director', img: '/images/usman.jpeg' },
 ];
 
 export default function About() {
