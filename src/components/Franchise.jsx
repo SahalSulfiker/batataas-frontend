@@ -16,7 +16,7 @@ export default function Franchise() {
                             Own a <span className="text-brand-tan">Bataatas</span> franchise.
                         </h2>
                         <p className="mt-5 font-body text-brand-muted max-w-xl text-base leading-relaxed">
-                            A QSR brand obsessed with quality, craft and crazy-good fries. Partner with us to bring Batatas to your city.
+                            A QSR brand obsessed with quality, craft and crazy-good fries. Partner with us to bring Bataatas to your city.
                         </p>
                     </div>
                     <div className="md:col-span-4 flex md:justify-end">
