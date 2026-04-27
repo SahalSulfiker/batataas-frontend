@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { LogIn, LogOut, RefreshCcw, Phone, MapPin, Package, Loader2, CheckCircle2, XCircle, ToggleLeft, ToggleRight, DollarSign } from 'lucide-react';
+import { LogIn, LogOut, RefreshCcw, Phone, MapPin, Package, Loader2, CheckCircle2, XCircle, DollarSign } from 'lucide-react';
 
 const BACKEND = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND}/api`;
@@ -17,57 +17,6 @@ const STATUS_COLORS = {
 
 const STATUS_OPTIONS = ['pending', 'confirmed', 'preparing', 'ready', 'delivered', 'cancelled'];
 
-const MENU_CATEGORIES = {
-    "Signature": [
-        { id: "chicken-loaded", name: "Chicken Loaded Fries" },
-        { id: "sausage-loaded", name: "Sausage Loaded Fries" },
-        { id: "machos", name: "Machos" },
-        { id: "beef-smash-loaded", name: "Smash Beef Loaded Fries" },
-    ],
-    "Snacks": [
-        { id: "exotic-fries", name: "Exotic French Fries" },
-        { id: "cheesy-fries", name: "Cheesy French Fries" },
-        { id: "peri-fries", name: "Peri Peri French Fries" },
-    ],
-    "Bites": [
-        { id: "nugget-bites", name: "Nugget Bites" },
-        { id: "peri-wings", name: "Peri Wings" },
-    ],
-    "Fried Chicken": [
-        { id: "fc-2pc", name: "2 Piece Fried Chicken" },
-        { id: "fc-5pc", name: "5 Piece Fried Chicken" },
-        { id: "fc-10pc", name: "10 Piece Fried Chicken" },
-        { id: "fc-20pc", name: "20 Piece Fried Chicken" },
-    ],
-    "Chicken Strips": [
-        { id: "cs-4pc", name: "4 Piece Chicken Strips" },
-        { id: "cs-8pc", name: "8 Piece Chicken Strips" },
-    ],
-    "Burgers": [
-        { id: "zinger", name: "Zinger Burger" },
-        { id: "beef-smash", name: "Beef Smash Burger" },
-    ],
-    "Drinks": [
-        { id: "lime-juice", name: "Lime Juice" },
-        { id: "mint-lime", name: "Mint Lime Juice" },
-        { id: "mango-juice", name: "Mango Juice" },
-        { id: "strawberry-juice", name: "Strawberry Juice" },
-        { id: "chikku-juice", name: "Chikku Juice" },
-        { id: "passion-mojito", name: "Passion Fruit Mojito" },
-        { id: "mint-mojito", name: "Mint Lime Mojito" },
-        { id: "blue-mojito", name: "Blue Curaçao Mojito" },
-        { id: "cold-coffee", name: "Cold Coffee" },
-    ],
-    "Soft Drinks": [
-        { id: "pepsi", name: "Pepsi" },
-        { id: "7up", name: "7UP" },
-    ],
-    "Add-ons": [
-        { id: "peri-seasoning", name: "Peri Peri Seasoning" },
-        { id: "cheese-slice", name: "Cheese Slice" },
-        { id: "extra-wings", name: "Extra Wings" },
-    ],
-};
 
 export default function AdminPage() {
     const [token, setToken] = useState(() => localStorage.getItem('batatas_admin_token') || '');
@@ -77,9 +26,7 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState('all');
     const [activeTab, setActiveTab] = useState('orders');
-    const [unavailable, setUnavailable] = useState(() => {
-        try { return JSON.parse(localStorage.getItem('batatas_unavailable') || '[]'); } catch { return []; }
-    });
+   
 
     const headers = { 'X-Admin-Password': token };
 
@@ -146,15 +93,6 @@ export default function AdminPage() {
             setOrders(prev => prev.map(o => o.id === id ? { ...o, payment_status: 'received' } : o));
             toast.success('Payment marked as received');
         }
-    };
-
-    const toggleItem = (id) => {
-        setUnavailable((prev) => {
-            const updated = prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id];
-            localStorage.setItem('batatas_unavailable', JSON.stringify(updated));
-            localStorage.setItem('batatas_unavailable_updated', Date.now().toString());
-            return updated;
-        });
     };
 
     useEffect(() => {
@@ -254,9 +192,6 @@ export default function AdminPage() {
                 <div className="flex gap-2 mb-6">
                     <button onClick={() => setActiveTab('orders')} className={`px-5 py-2 rounded-full font-body text-xs uppercase tracking-widest font-bold border transition-all ${activeTab === 'orders' ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}>
                         Orders
-                    </button>
-                    <button onClick={() => setActiveTab('stock')} className={`px-5 py-2 rounded-full font-body text-xs uppercase tracking-widest font-bold border transition-all ${activeTab === 'stock' ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}>
-                        Stock
                     </button>
                 </div>
 
@@ -371,37 +306,6 @@ export default function AdminPage() {
                     </>
                 )}
 
-                {/* STOCK TAB */}
-                {activeTab === 'stock' && (
-                    <div className="space-y-6">
-                        <p className="font-body text-sm text-brand-muted">Toggle items to mark them as unavailable. Unavailable items will show an overlay on the menu.</p>
-                        {Object.entries(MENU_CATEGORIES).map(([category, items]) => (
-                            <div key={category} className="bg-white rounded-2xl border border-brand-line overflow-hidden">
-                                <div className="px-5 py-3 border-b border-brand-line bg-brand-cream/50">
-                                    <div className="font-display uppercase text-lg text-brand-ink tracking-wide">{category}</div>
-                                </div>
-                                <div className="divide-y divide-brand-line">
-                                    {items.map((item) => {
-                                        const isUnavailable = unavailable.includes(item.id);
-                                        return (
-                                            <div key={item.id} className="flex items-center justify-between px-5 py-3">
-                                                <span className={`font-body text-sm ${isUnavailable ? 'text-brand-muted line-through' : 'text-brand-ink'}`}>
-                                                    {item.name}
-                                                </span>
-                                                <button
-                                                    onClick={() => toggleItem(item.id)}
-                                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-widest font-bold transition-all ${isUnavailable ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}
-                                                >
-                                                    {isUnavailable ? <><ToggleLeft size={14}/> Unavailable</> : <><ToggleRight size={14}/> Available</>}
-                                                </button>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
             </div>
         </div>
     );
