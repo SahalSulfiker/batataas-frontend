@@ -28,7 +28,7 @@ export default function Footer({ branches }) {
                             data-testid="footer-instagram-link"
                             className="mt-5 inline-flex items-center gap-2 text-sm text-brand-cream hover:text-brand-tan transition-colors"
                         >
-                            <Instagram size={15}/> @bataatas_in
+                            <Instagram size={15}/> @bataatas.in
                         </a>
                     </div>
 
@@ -56,7 +56,7 @@ export default function Footer({ branches }) {
                 </div>
 
                 <div className="mt-14 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs font-body text-brand-cream/55">
-                    <div>© {new Date().getFullYear()} Batatas. All rights reserved.</div>
+                    <div>© {new Date().getFullYear()} Bataatas. All rights reserved.</div>
                     <div className="font-body text-brand-cream/55">Savor the taste of potato luxury</div>
                 </div>
             </div>

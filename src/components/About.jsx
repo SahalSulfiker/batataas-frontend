@@ -22,10 +22,10 @@ export default function About() {
                             to <span className="text-brand-brown">pure luxury.</span>
                         </h2>
                         <p className="mt-6 font-body text-brand-brown/85 text-base md:text-lg leading-relaxed">
-                            Batatas was born from a simple obsession — the perfect fry. Hand-cut, double-fried, seasoned in small batches and loaded with bold flavour. Every recipe is tested, every sauce house-made, every box built to make you grin.
+                            Bataatas was born from a simple obsession — the perfect fry. Hand-cut, double-fried, seasoned in small batches and loaded with bold flavour. Every recipe is tested, every sauce house-made, every box built to make you grin.
                         </p>
                         <p className="mt-4 font-body text-brand-brown/75 text-base leading-relaxed">
-                            Today, Batatas serves up crispy joy across Kerala — and we're just getting started.
+                            Today, Bataatas serves up crispy joy across Kerala — and we're just getting started.
                         </p>
 
                         <div className="mt-8 grid grid-cols-3 gap-4">

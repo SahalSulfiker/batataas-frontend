@@ -71,7 +71,7 @@ export default function Header() {
                             <Phone size={13} /> Wandoor
                         </a>
                         <a
-                            href="https://instagram.com/bataatas_in"
+                            href="https://instagram.com/bataatas.in"
                             target="_blank"
                             rel="noreferrer"
                             data-testid="instagram-link"

@@ -38,7 +38,7 @@ export const FALLBACK_MENU = {
             { id: "strawberry-juice", name: "Strawberry Juice", price: 70, desc: "Fresh strawberries blended smooth.", image: "/images/strawberry juice.jpg" },
             { id: "chikku-juice", name: "Chikku Juice", price: 70, desc: "Creamy sapodilla shake — a tropical classic.", image: "/images/chikku juice.jpg" },
             { id: "passion-mojito", name: "Passion Fruit Mojito", price: 90, desc: "Passion fruit, mint, lime — the ultimate refresher.", image: "/images/passion fruit mojito.jpg" },
-            { id: "mint-mojito", name: "Mint Lime Mojito", price: 90, desc: "Classic minty-lime mojito — cool, crisp, iconic.", image: "/images/mint lime.jpg" },
+            { id: "mint-mojito", name: "Mint Lime Mojito", price: 90, desc: "Classic minty-lime mojito — cool, crisp, iconic.", image: "/images/mint mojito.jpg" },
             { id: "blue-mojito", name: "Blue Curaçao Mojito", price: 90, desc: "Tropical blue curaçao swirled with mint and lime.", image: "/images/blue mojito new.png" },
             { id: "cold-coffee", name: "Cold Coffee", price: 90, desc: "Rich, creamy and ice-cold — the perfect pick-me-up.", image: "/images/cold coffee.jpg" },
         ],

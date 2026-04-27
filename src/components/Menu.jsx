@@ -33,7 +33,7 @@ export default function Menu({ menuData }) {
                         </h2>
                     </div>
                     <p className="font-body text-brand-brown/80 max-w-md text-base md:text-lg">
-                        From signature loaded fries to hand-breaded fried chicken and icy mojitos — every bite is made to order, the Batatas way.
+                        From signature loaded fries to hand-breaded fried chicken and icy mojitos — every bite is made to order, the Bataatas way.
                     </p>
                 </div>
 

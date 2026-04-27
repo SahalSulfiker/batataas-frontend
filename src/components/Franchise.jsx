@@ -13,7 +13,7 @@ export default function Franchise() {
                             Franchise enquiry
                         </div>
                         <h2 className="font-display uppercase text-brand-ink text-4xl md:text-5xl lg:text-6xl tracking-wide leading-[0.95]">
-                            Own a <span className="text-brand-tan">Batatas</span> franchise.
+                            Own a <span className="text-brand-tan">Bataatas</span> franchise.
                         </h2>
                         <p className="mt-5 font-body text-brand-muted max-w-xl text-base leading-relaxed">
                             A QSR brand obsessed with quality, craft and crazy-good fries. Partner with us to bring Batatas to your city.
