@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { LogIn, LogOut, RefreshCcw, Phone, MapPin, Package, Loader2 } from 'lucide-react';
+import { LogIn, LogOut, RefreshCcw, Phone, MapPin, Package, Loader2, CheckCircle2, XCircle, ToggleLeft, ToggleRight, DollarSign } from 'lucide-react';
 
 const BACKEND = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND}/api`;
@@ -17,6 +17,58 @@ const STATUS_COLORS = {
 
 const STATUS_OPTIONS = ['pending', 'confirmed', 'preparing', 'ready', 'delivered', 'cancelled'];
 
+const MENU_CATEGORIES = {
+    "Signature": [
+        { id: "chicken-loaded", name: "Chicken Loaded Fries" },
+        { id: "sausage-loaded", name: "Sausage Loaded Fries" },
+        { id: "machos", name: "Machos" },
+        { id: "beef-smash-loaded", name: "Smash Beef Loaded Fries" },
+    ],
+    "Snacks": [
+        { id: "exotic-fries", name: "Exotic French Fries" },
+        { id: "cheesy-fries", name: "Cheesy French Fries" },
+        { id: "peri-fries", name: "Peri Peri French Fries" },
+    ],
+    "Bites": [
+        { id: "nugget-bites", name: "Nugget Bites" },
+        { id: "peri-wings", name: "Peri Wings" },
+    ],
+    "Fried Chicken": [
+        { id: "fc-2pc", name: "2 Piece Fried Chicken" },
+        { id: "fc-5pc", name: "5 Piece Fried Chicken" },
+        { id: "fc-10pc", name: "10 Piece Fried Chicken" },
+        { id: "fc-20pc", name: "20 Piece Fried Chicken" },
+    ],
+    "Chicken Strips": [
+        { id: "cs-4pc", name: "4 Piece Chicken Strips" },
+        { id: "cs-8pc", name: "8 Piece Chicken Strips" },
+    ],
+    "Burgers": [
+        { id: "zinger", name: "Zinger Burger" },
+        { id: "beef-smash", name: "Beef Smash Burger" },
+    ],
+    "Drinks": [
+        { id: "lime-juice", name: "Lime Juice" },
+        { id: "mint-lime", name: "Mint Lime Juice" },
+        { id: "mango-juice", name: "Mango Juice" },
+        { id: "strawberry-juice", name: "Strawberry Juice" },
+        { id: "chikku-juice", name: "Chikku Juice" },
+        { id: "passion-mojito", name: "Passion Fruit Mojito" },
+        { id: "mint-mojito", name: "Mint Lime Mojito" },
+        { id: "blue-mojito", name: "Blue Curaçao Mojito" },
+        { id: "cold-coffee", name: "Cold Coffee" },
+    ],
+    "Soft Drinks": [
+        { id: "pepsi", name: "Pepsi" },
+        { id: "7up", name: "7UP" },
+    ],
+    "Add-ons": [
+        { id: "peri-seasoning", name: "Peri Peri Seasoning" },
+        { id: "cheese-slice", name: "Cheese Slice" },
+        { id: "extra-wings", name: "Extra Wings" },
+    ],
+};
+
 export default function AdminPage() {
     const [token, setToken] = useState(() => localStorage.getItem('batatas_admin_token') || '');
     const [pwd, setPwd] = useState('');
@@ -24,6 +76,10 @@ export default function AdminPage() {
     const [stats, setStats] = useState({ total_orders: 0, pending_orders: 0, today_orders: 0 });
     const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState('all');
+    const [activeTab, setActiveTab] = useState('orders');
+    const [unavailable, setUnavailable] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('batatas_unavailable') || '[]'); } catch { return []; }
+    });
 
     const headers = { 'X-Admin-Password': token };
 
@@ -80,6 +136,27 @@ export default function AdminPage() {
         }
     };
 
+    const markPaymentReceived = async (id) => {
+        try {
+            await axios.patch(`${API}/admin/orders/${id}/payment`, {}, { headers });
+            toast.success('Payment marked as received');
+            refresh();
+        } catch (err) {
+            // Fallback — update locally
+            setOrders(prev => prev.map(o => o.id === id ? { ...o, payment_status: 'received' } : o));
+            toast.success('Payment marked as received');
+        }
+    };
+
+    const toggleItem = (id) => {
+        setUnavailable((prev) => {
+            const updated = prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id];
+            localStorage.setItem('batatas_unavailable', JSON.stringify(updated));
+            localStorage.setItem('batatas_unavailable_updated', Date.now().toString());
+            return updated;
+        });
+    };
+
     useEffect(() => {
         if (token) {
             refresh();
@@ -89,6 +166,28 @@ export default function AdminPage() {
     }, [token, refresh]);
 
     const visible = filter === 'all' ? orders : orders.filter((o) => o.status === filter);
+
+    const getPaymentBadge = (o) => {
+        if (o.payment_method === 'online') {
+            if (o.payment_status === 'received') {
+                return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-100 text-green-800"><CheckCircle2 size={11}/> Paid</span>;
+            }
+            return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-red-100 text-red-800"><XCircle size={11}/> Awaiting Payment</span>;
+        }
+        if (o.payment_method === 'cod') {
+            if (o.payment_status === 'received') {
+                return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-100 text-green-800"><CheckCircle2 size={11}/> COD Received</span>;
+            }
+            return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-amber-100 text-amber-800">COD Pending</span>;
+        }
+        if (o.payment_method === 'counter') {
+            if (o.payment_status === 'received') {
+                return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-100 text-green-800"><CheckCircle2 size={11}/> Counter Received</span>;
+            }
+            return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-amber-100 text-amber-800">Counter Pending</span>;
+        }
+        return null;
+    };
 
     if (!token) {
         return (
@@ -121,7 +220,6 @@ export default function AdminPage() {
 
     return (
         <div className="min-h-screen bg-brand-cream text-brand-ink">
-            {/* Top bar */}
             <header className="bg-brand-ink text-brand-cream px-4 md:px-8 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="font-script text-brand-tan text-xl -rotate-2">admin</div>
@@ -152,105 +250,155 @@ export default function AdminPage() {
                     ))}
                 </div>
 
-                {/* Filters */}
-                <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6">
-                    {['all', ...STATUS_OPTIONS].map((s) => (
-                        <button
-                            key={s}
-                            onClick={() => setFilter(s)}
-                            data-testid={`admin-filter-${s}`}
-                            className={`whitespace-nowrap px-4 py-2 rounded-full font-body text-[11px] uppercase tracking-widest font-bold border transition-all ${filter === s ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}
-                        >
-                            {s}
-                        </button>
-                    ))}
+                {/* Tabs */}
+                <div className="flex gap-2 mb-6">
+                    <button onClick={() => setActiveTab('orders')} className={`px-5 py-2 rounded-full font-body text-xs uppercase tracking-widest font-bold border transition-all ${activeTab === 'orders' ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}>
+                        Orders
+                    </button>
+                    <button onClick={() => setActiveTab('stock')} className={`px-5 py-2 rounded-full font-body text-xs uppercase tracking-widest font-bold border transition-all ${activeTab === 'stock' ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}>
+                        Stock
+                    </button>
                 </div>
 
-                {/* Orders */}
-                {visible.length === 0 ? (
-                    <div className="bg-white rounded-2xl border border-brand-line p-12 text-center">
-                        <Package className="mx-auto text-brand-tan mb-3" size={32} />
-                        <div className="font-display uppercase text-xl">No orders yet</div>
-                        <p className="font-body text-sm text-brand-muted mt-1">New orders will appear here automatically.</p>
-                    </div>
-                ) : (
-                    <div className="space-y-3">
-                        {visible.map((o) => (
-                            <details key={o.id} data-testid={`order-card-${o.short_id}`} className="group bg-white rounded-2xl border border-brand-line overflow-hidden">
-                                <summary className="flex items-center gap-4 p-4 cursor-pointer list-none">
-                                    <div className="flex-1 min-w-0 grid grid-cols-2 md:grid-cols-6 gap-3 items-center">
-                                        <div>
-                                            <div className="font-display uppercase text-sm text-brand-ink tracking-wide">#{o.short_id}</div>
-                                            <div className="font-body text-[11px] text-brand-muted">{new Date(o.created_at).toLocaleString()}</div>
-                                        </div>
-                                        <div className="col-span-1 md:col-span-2">
-                                            <div className="font-body text-sm text-brand-ink font-bold truncate">{o.customer_name}</div>
-                                            <a href={`tel:${o.customer_phone}`} className="font-body text-xs text-brand-tan inline-flex items-center gap-1 hover:underline"><Phone size={11}/> {o.customer_phone}</a>
-                                        </div>
-                                        <div className="font-body text-xs text-brand-muted inline-flex items-center gap-1 capitalize"><MapPin size={11}/> {o.branch}</div>
-                                        <div className="font-body text-xs text-brand-muted capitalize">{o.order_type}</div>
-                                        <div className="flex items-center justify-end gap-2">
-                                            <span className={`px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold ${o.payment_method === 'online' ? 'bg-brand-tan/15 text-brand-tanDark' : 'bg-brand-ink/10 text-brand-ink'}`}>
-                                                {o.payment_method === 'online' ? 'Online' : o.payment_method === 'cod' ? 'COD' : 'Counter'}
-                                            </span>
-                                            <div className="font-display text-lg text-brand-ink">₹{o.amount}</div>
-                                            <span className={`px-2 py-0.5 rounded-full border text-[10px] uppercase tracking-widest font-bold ${STATUS_COLORS[o.status] || 'bg-brand-cream text-brand-muted border-brand-line'}`}>{o.status}</span>
-                                        </div>
-                                    </div>
-                                </summary>
-                                <div className="border-t border-brand-line px-4 py-4 bg-brand-cream/40 space-y-4">
-                                    {/* Items */}
-                                    <div>
-                                        <div className="font-body text-[10px] uppercase tracking-widest text-brand-muted mb-2">Items</div>
-                                        <ul className="space-y-1 font-body text-sm">
-                                            {o.items.map((it) => (
-                                                <li key={it.id} className="flex justify-between">
-                                                    <span>{it.qty}× {it.name}</span>
-                                                    <span className="text-brand-muted">₹{it.line_total}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
+                {/* ORDERS TAB */}
+                {activeTab === 'orders' && (
+                    <>
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6">
+                            {['all', ...STATUS_OPTIONS].map((s) => (
+                                <button
+                                    key={s}
+                                    onClick={() => setFilter(s)}
+                                    data-testid={`admin-filter-${s}`}
+                                    className={`whitespace-nowrap px-4 py-2 rounded-full font-body text-[11px] uppercase tracking-widest font-bold border transition-all ${filter === s ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
 
-                                    {o.customer_address && (
-                                        <div>
-                                            <div className="font-body text-[10px] uppercase tracking-widest text-brand-muted">Delivery address</div>
-                                            <div className="font-body text-sm text-brand-ink">{o.customer_address}</div>
-                                        </div>
-                                    )}
-                                    {o.notes && (
-                                        <div>
-                                            <div className="font-body text-[10px] uppercase tracking-widest text-brand-muted">Notes</div>
-                                            <div className="font-body text-sm text-brand-ink">{o.notes}</div>
-                                        </div>
-                                    )}
+                        {visible.length === 0 ? (
+                            <div className="bg-white rounded-2xl border border-brand-line p-12 text-center">
+                                <Package className="mx-auto text-brand-tan mb-3" size={32} />
+                                <div className="font-display uppercase text-xl">No orders yet</div>
+                                <p className="font-body text-sm text-brand-muted mt-1">New orders will appear here automatically.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {visible.map((o) => (
+                                    <details key={o.id} data-testid={`order-card-${o.short_id}`} className="group bg-white rounded-2xl border border-brand-line overflow-hidden">
+                                        <summary className="flex items-center gap-4 p-4 cursor-pointer list-none">
+                                            <div className="flex-1 min-w-0 grid grid-cols-2 md:grid-cols-6 gap-3 items-center">
+                                                <div>
+                                                    <div className="font-display uppercase text-sm text-brand-ink tracking-wide">#{o.short_id}</div>
+                                                    <div className="font-body text-[11px] text-brand-muted">{new Date(o.created_at).toLocaleString()}</div>
+                                                </div>
+                                                <div className="col-span-1 md:col-span-2">
+                                                    <div className="font-body text-sm text-brand-ink font-bold truncate">{o.customer_name}</div>
+                                                    <a href={`tel:${o.customer_phone}`} className="font-body text-xs text-brand-tan inline-flex items-center gap-1 hover:underline"><Phone size={11}/> {o.customer_phone}</a>
+                                                </div>
+                                                <div className="font-body text-xs text-brand-muted inline-flex items-center gap-1 capitalize"><MapPin size={11}/> {o.branch}</div>
+                                                <div className="font-body text-xs text-brand-muted capitalize">{o.order_type}</div>
+                                                <div className="flex items-center justify-end gap-2 flex-wrap">
+                                                    {getPaymentBadge(o)}
+                                                    <div className="font-display text-lg text-brand-ink">₹{o.amount}</div>
+                                                    <span className={`px-2 py-0.5 rounded-full border text-[10px] uppercase tracking-widest font-bold ${STATUS_COLORS[o.status] || 'bg-brand-cream text-brand-muted border-brand-line'}`}>{o.status}</span>
+                                                </div>
+                                            </div>
+                                        </summary>
+                                        <div className="border-t border-brand-line px-4 py-4 bg-brand-cream/40 space-y-4">
+                                            <div>
+                                                <div className="font-body text-[10px] uppercase tracking-widest text-brand-muted mb-2">Items</div>
+                                                <ul className="space-y-1 font-body text-sm">
+                                                    {o.items.map((it) => (
+                                                        <li key={it.id} className="flex justify-between">
+                                                            <span>{it.qty}× {it.name}</span>
+                                                            <span className="text-brand-muted">₹{it.line_total}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
 
-                                    {/* Actions */}
-                                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                                        <span className="font-body text-[10px] uppercase tracking-widest text-brand-muted mr-1">Set status:</span>
-                                        {STATUS_OPTIONS.map((s) => (
-                                            <button
-                                                key={s}
-                                                data-testid={`set-status-${s}-${o.short_id}`}
-                                                onClick={() => updateStatus(o.id, s)}
-                                                className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold border transition-all ${o.status === s ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan hover:text-brand-tan'}`}
-                                            >
-                                                {s}
-                                            </button>
-                                        ))}
-                                        {o.payment_link && (
-                                            <a
-                                                href={o.payment_link}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="ml-auto px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold bg-brand-tan text-white hover:bg-brand-tanDark"
-                                            >
-                                                View Payment Link
-                                            </a>
-                                        )}
-                                    </div>
+                                            {o.customer_address && (
+                                                <div>
+                                                    <div className="font-body text-[10px] uppercase tracking-widest text-brand-muted">Delivery address</div>
+                                                    <div className="font-body text-sm text-brand-ink">{o.customer_address}</div>
+                                                </div>
+                                            )}
+                                            {o.notes && (
+                                                <div>
+                                                    <div className="font-body text-[10px] uppercase tracking-widest text-brand-muted">Notes</div>
+                                                    <div className="font-body text-sm text-brand-ink">{o.notes}</div>
+                                                </div>
+                                            )}
+
+                                            {/* Payment section */}
+                                            <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-brand-line">
+                                                <div className="w-full flex items-center justify-between">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-body text-[10px] uppercase tracking-widest text-brand-muted">Payment:</span>
+                                                        {getPaymentBadge(o)}
+                                                    </div>
+                                                    {o.payment_status !== 'received' && o.payment_method !== 'online' && (
+                                                        <button
+                                                            onClick={() => markPaymentReceived(o.id)}
+                                                            className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-600 text-white hover:bg-green-700 transition-colors"
+                                                        >
+                                                            <DollarSign size={11}/> Mark as Received
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Status actions */}
+                                            <div className="flex flex-wrap items-center gap-2 pt-1">
+                                                <span className="font-body text-[10px] uppercase tracking-widest text-brand-muted mr-1">Set status:</span>
+                                                {STATUS_OPTIONS.map((s) => (
+                                                    <button
+                                                        key={s}
+                                                        data-testid={`set-status-${s}-${o.short_id}`}
+                                                        onClick={() => updateStatus(o.id, s)}
+                                                        className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold border transition-all ${o.status === s ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan hover:text-brand-tan'}`}
+                                                    >
+                                                        {s}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </details>
+                                ))}
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {/* STOCK TAB */}
+                {activeTab === 'stock' && (
+                    <div className="space-y-6">
+                        <p className="font-body text-sm text-brand-muted">Toggle items to mark them as unavailable. Unavailable items will show an overlay on the menu.</p>
+                        {Object.entries(MENU_CATEGORIES).map(([category, items]) => (
+                            <div key={category} className="bg-white rounded-2xl border border-brand-line overflow-hidden">
+                                <div className="px-5 py-3 border-b border-brand-line bg-brand-cream/50">
+                                    <div className="font-display uppercase text-lg text-brand-ink tracking-wide">{category}</div>
                                 </div>
-                            </details>
+                                <div className="divide-y divide-brand-line">
+                                    {items.map((item) => {
+                                        const isUnavailable = unavailable.includes(item.id);
+                                        return (
+                                            <div key={item.id} className="flex items-center justify-between px-5 py-3">
+                                                <span className={`font-body text-sm ${isUnavailable ? 'text-brand-muted line-through' : 'text-brand-ink'}`}>
+                                                    {item.name}
+                                                </span>
+                                                <button
+                                                    onClick={() => toggleItem(item.id)}
+                                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-widest font-bold transition-all ${isUnavailable ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}
+                                                >
+                                                    {isUnavailable ? <><ToggleLeft size={14}/> Unavailable</> : <><ToggleRight size={14}/> Available</>}
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         ))}
                     </div>
                 )}

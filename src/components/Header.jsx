@@ -36,7 +36,7 @@ export default function Header() {
                             <img src={LOGO} alt="Batatas" className="h-full w-full object-cover" loading="eager" />
                         </div>
                         <div className="hidden sm:block leading-none">
-                            <div className="font-display text-2xl tracking-wider text-brand-ink">BATAATAS</div>
+                            <div style={{fontFamily: "'Yellowtail', cursive"}} className="text-2xl text-brand-ink">Bataatas</div>
                             <div className="font-script text-sm text-brand-tan -mt-0.5">potato luxury</div>
                         </div>
                     </a>
