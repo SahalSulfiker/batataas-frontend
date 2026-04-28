@@ -15,7 +15,7 @@ export const FALLBACK_MENU = {
         ],
         "Bites": [
             { id: "nugget-bites", name: "Nugget Bites", price: 130, desc: "Crispy chicken nuggets tossed in signature peri peri seasoning.", image: "/images/nuggets.jpeg" },
-            { id: "peri-wings", name: "Peri Wings", price: 150, desc: "Spicy peri peri wings — a fiery combo you can't resist.", image: "/images/8pcs wings.jpeg" },
+            { id: "peri-wings", name: "Peri Wings", price: 150, desc: "Spicy peri peri wings — a fiery combo you can't resist.", image: "/images/new peri wings.jpg" },
         ],
         "Fried Chicken": [
             { id: "fc-2pc", name: "2 Piece Fried Chicken", price: 160, desc: "Two pieces of golden, juicy hand-breaded fried chicken.", image: "/images/2pcs.jpeg" },
@@ -29,16 +29,16 @@ export const FALLBACK_MENU = {
         ],
         "Burgers": [
             { id: "zinger", name: "Zinger Burger", price: 150, desc: "Crispy spiced chicken fillet with fresh lettuce and creamy mayo.", image: "/images/zinger burger.jpg" },
-            { id: "beef-smash", name: "Beef Smash Burger", price: 170, desc: "Smashed beef patty, melted cheese and our signature sauce.", image: "/images/beef smash burger.jpg" },
+            { id: "beef-smash", name: "Beef Smash Burger", price: 170, desc: "Smashed beef patty, melted cheese and our signature sauce.", image: "/images/new beef burger.jpg" },
         ],
         "Drinks": [
             { id: "lime-juice", name: "Lime Juice", price: 25, desc: "Freshly squeezed lime juice — zesty and refreshing.", image: "/images/lime juice.jpg" },
-            { id: "mint-lime", name: "Mint Lime Juice", price: 30, desc: "Cool mint meets zesty lime.", image: "/images/mint lime.jpg" },
+            { id: "mint-lime", name: "Mint Lime Juice", price: 30, desc: "Cool mint meets zesty lime.", image: "/images/new mint lime.jpg" },
             { id: "mango-juice", name: "Mango Juice", price: 70, desc: "Thick, sweet, sun-ripened mango.", image: "/images/mango juice.jpg" },
-            { id: "strawberry-juice", name: "Strawberry Juice", price: 70, desc: "Fresh strawberries blended smooth.", image: "/images/strawberry juice new.jpg" },
+            { id: "strawberry-juice", name: "Strawberry Juice", price: 70, desc: "Fresh strawberries blended smooth.", image: "/images/new stawberry.jpg" },
             { id: "chikku-juice", name: "Chikku Juice", price: 70, desc: "Creamy sapodilla shake — a tropical classic.", image: "/images/chikku juice.jpg" },
             { id: "passion-mojito", name: "Passion Fruit Mojito", price: 90, desc: "Passion fruit, mint, lime — the ultimate refresher.", image: "/images/passion fruit mojito.jpg" },
-            { id: "mint-mojito", name: "Mint Lime Mojito", price: 90, desc: "Classic minty-lime mojito — cool, crisp, iconic.", image: "/images/mint mojito new.jpg" },
+            { id: "mint-mojito", name: "Mint Lime Mojito", price: 90, desc: "Classic minty-lime mojito — cool, crisp, iconic.", image: "/images/new mint mojito.jpg" },
             { id: "blue-mojito", name: "Blue Curaçao Mojito", price: 90, desc: "Tropical blue curaçao swirled with mint and lime.", image: "/images/blue mojito new.png" },
             { id: "cold-coffee", name: "Cold Coffee", price: 90, desc: "Rich, creamy and ice-cold — the perfect pick-me-up.", image: "/images/cold coffee new.jpg" },
         ],
