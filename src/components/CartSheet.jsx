@@ -11,7 +11,7 @@ const API = `${BACKEND}/api`;
 const BRANCH_OPTIONS = [
     { id: 'wandoor', label: 'Wandoor · Opp CH Button House' },
     { id: 'manjeri', label: 'Manjeri · KP Tower, Thurakkal Bypass' },
-    { id: 'mampad', label: 'Mampad · Main Road' },
+   // { id: 'mampad', label: 'Mampad · Main Road' },
 ];
 
 function loadRazorpayScript() {
