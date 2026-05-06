@@ -11,7 +11,6 @@ const API = `${BACKEND}/api`;
 const BRANCH_OPTIONS = [
     { id: 'wandoor', label: 'Wandoor · Opp CH Button House' },
     { id: 'manjeri', label: 'Manjeri · KP Tower, Thurakkal Bypass' },
-   // { id: 'mampad', label: 'Mampad · Main Road' },
 ];
 
 function loadRazorpayScript() {
@@ -24,6 +23,58 @@ function loadRazorpayScript() {
         script.onerror = () => resolve(false);
         document.body.appendChild(script);
     });
+}
+
+function getHandlingCharge(subtotal) {
+    if (subtotal >= 500) return 0;
+    if (subtotal >= 350) return 10;
+    if (subtotal >= 200) return 20;
+    return 30;
+}
+
+function getFreeThreshold(subtotal) {
+    if (subtotal >= 500) return 500;
+    if (subtotal >= 350) return 500;
+    if (subtotal >= 200) return 350;
+    return 200;
+}
+
+function HandlingChargeBar({ subtotal }) {
+    const charge = getHandlingCharge(subtotal);
+    const threshold = getFreeThreshold(subtotal);
+    const progress = Math.min((subtotal / 500) * 100, 100);
+    const amountNeeded = 500 - subtotal;
+
+    return (
+        <div className="bg-white rounded-2xl p-4 border border-brand-line space-y-2">
+            {/* Progress bar */}
+            <div className="relative h-3 bg-brand-cream rounded-full overflow-hidden">
+                <div
+                    className="absolute left-0 top-0 h-full rounded-full transition-all duration-500"
+                    style={{
+                        width: `${progress}%`,
+                        background: 'linear-gradient(90deg, #C47B3E, #e09050)',
+                    }}
+                />
+            </div>
+
+            {/* Message */}
+            <div className="flex items-center justify-between">
+                {charge === 0 ? (
+                    <p className="font-body text-xs text-green-600 font-bold">
+                        🎉 You've got FREE Handling!
+                    </p>
+                ) : (
+                    <p className="font-body text-xs text-brand-muted">
+                        Add <span className="font-bold text-brand-tan">₹{500 - subtotal}</span> more for <span className="font-bold text-green-600">FREE Handling</span>
+                    </p>
+                )}
+                <span className={`font-body text-xs font-bold ${charge === 0 ? 'text-green-600' : 'text-brand-tan'}`}>
+                    {charge === 0 ? 'FREE' : `₹${charge} fee`}
+                </span>
+            </div>
+        </div>
+    );
 }
 
 export default function CartSheet() {
@@ -39,6 +90,13 @@ export default function CartSheet() {
     const offlineKey = orderType === 'delivery' ? 'cod' : 'counter';
     const offlineLabel = orderType === 'delivery' ? 'Cash on Delivery' : 'Pay at Counter';
     const OfflineIcon = orderType === 'delivery' ? Banknote : Wallet;
+
+    const handlingCharge = useMemo(() => {
+        if (orderType !== 'delivery') return 0;
+        return getHandlingCharge(total);
+    }, [total, orderType]);
+
+    const grandTotal = total + handlingCharge;
 
     const effectivePayment = useMemo(() => {
         if (paymentMethod === 'online') return 'online';
@@ -70,6 +128,7 @@ export default function CartSheet() {
                 customer_phone: form.phone,
                 customer_address: form.address,
                 notes: form.notes,
+                handling_charge: handlingCharge,
             });
 
             const order = resp.data;
@@ -102,7 +161,7 @@ export default function CartSheet() {
                     }
                 };
                 const rzp = new window.Razorpay(options);
-                setIsOpen(false)
+                setIsOpen(false);
                 rzp.open();
                 setLoading(false);
             } else {
@@ -186,22 +245,31 @@ export default function CartSheet() {
                 {count > 0 && step !== 'placed' && (
                     <>
                         <div className="flex-1 overflow-y-auto p-5 space-y-3">
-                            {step === 'cart' && items.map((it) => (
-                                <div key={it.id} data-testid={`cart-line-${it.id}`} className="flex gap-3 bg-white rounded-2xl p-3 border border-brand-line">
-                                    <img src={it.image} alt={it.name} className="h-20 w-20 rounded-xl object-cover" />
-                                    <div className="flex-1 min-w-0">
-                                        <div className="font-display uppercase text-base text-brand-ink truncate">{it.name}</div>
-                                        <div className="font-body text-sm text-brand-tan font-bold">₹{it.price}</div>
-                                        <div className="mt-2 flex items-center gap-2">
-                                            <button onClick={() => dec(it.id)} data-testid={`cart-dec-${it.id}`} className="h-7 w-7 grid place-items-center rounded-full bg-brand-cream border border-brand-line hover:bg-brand-tan hover:text-white hover:border-brand-tan transition-colors"><Minus size={13}/></button>
-                                            <span data-testid={`cart-qty-${it.id}`} className="font-bold w-6 text-center">{it.qty}</span>
-                                            <button onClick={() => inc(it.id)} data-testid={`cart-inc-${it.id}`} className="h-7 w-7 grid place-items-center rounded-full bg-brand-cream border border-brand-line hover:bg-brand-tan hover:text-white hover:border-brand-tan transition-colors"><Plus size={13}/></button>
-                                            <button onClick={() => remove(it.id)} data-testid={`cart-remove-${it.id}`} className="ml-auto text-brand-tan hover:text-brand-tanDark" aria-label="Remove"><Trash2 size={16}/></button>
+                            {step === 'cart' && (
+                                <>
+                                    {items.map((it) => (
+                                        <div key={it.id} data-testid={`cart-line-${it.id}`} className="flex gap-3 bg-white rounded-2xl p-3 border border-brand-line">
+                                            <img src={it.image} alt={it.name} className="h-20 w-20 rounded-xl object-cover" />
+                                            <div className="flex-1 min-w-0">
+                                                <div className="font-display uppercase text-base text-brand-ink truncate">{it.name}</div>
+                                                <div className="font-body text-sm text-brand-tan font-bold">₹{it.price}</div>
+                                                <div className="mt-2 flex items-center gap-2">
+                                                    <button onClick={() => dec(it.id)} data-testid={`cart-dec-${it.id}`} className="h-7 w-7 grid place-items-center rounded-full bg-brand-cream border border-brand-line hover:bg-brand-tan hover:text-white hover:border-brand-tan transition-colors"><Minus size={13}/></button>
+                                                    <span data-testid={`cart-qty-${it.id}`} className="font-bold w-6 text-center">{it.qty}</span>
+                                                    <button onClick={() => inc(it.id)} data-testid={`cart-inc-${it.id}`} className="h-7 w-7 grid place-items-center rounded-full bg-brand-cream border border-brand-line hover:bg-brand-tan hover:text-white hover:border-brand-tan transition-colors"><Plus size={13}/></button>
+                                                    <button onClick={() => remove(it.id)} data-testid={`cart-remove-${it.id}`} className="ml-auto text-brand-tan hover:text-brand-tanDark" aria-label="Remove"><Trash2 size={16}/></button>
+                                                </div>
+                                            </div>
+                                            <div className="font-display text-brand-ink text-lg self-start">₹{it.price * it.qty}</div>
                                         </div>
-                                    </div>
-                                    <div className="font-display text-brand-ink text-lg self-start">₹{it.price * it.qty}</div>
-                                </div>
-                            ))}
+                                    ))}
+
+                                    {/* Handling Charge Bar — only for delivery */}
+                                    {orderType === 'delivery' && (
+                                        <HandlingChargeBar subtotal={total} />
+                                    )}
+                                </>
+                            )}
 
                             {step === 'details' && (
                                 <div className="space-y-3">
@@ -285,9 +353,23 @@ export default function CartSheet() {
                                 <button data-testid="order-type-dinein-btn" onClick={() => { setOrderType('dine-in'); }} className={`flex items-center justify-center gap-2 py-2 rounded-full font-body font-bold text-xs uppercase tracking-widest transition-all ${orderType==='dine-in'?'bg-brand-ink text-brand-cream':'text-brand-muted'}`}><Store size={14}/> Dine-in</button>
                             </div>
 
+                            {/* Subtotal + Handling */}
+                            {orderType === 'delivery' && handlingCharge > 0 && (
+                                <div className="space-y-1">
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-body text-xs text-brand-muted">Subtotal</span>
+                                        <span className="font-body text-sm text-brand-ink">₹{total}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-body text-xs text-brand-muted">Handling Charge</span>
+                                        <span className="font-body text-sm text-brand-tan">+₹{handlingCharge}</span>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="flex items-center justify-between">
                                 <span className="font-body text-xs uppercase tracking-widest text-brand-muted">Total</span>
-                                <span data-testid="cart-total" className="font-display text-3xl text-brand-ink">₹{total}</span>
+                                <span data-testid="cart-total" className="font-display text-3xl text-brand-ink">₹{grandTotal}</span>
                             </div>
 
                             {step === 'cart' ? (
@@ -298,7 +380,7 @@ export default function CartSheet() {
                                 <div className="flex gap-2">
                                     <button data-testid="back-to-cart-btn" onClick={() => setStep('cart')} className="px-5 py-4 rounded-full bg-brand-cream text-brand-ink font-body font-bold uppercase tracking-widest text-xs border border-brand-line">Back</button>
                                     <button data-testid="checkout-btn" onClick={handlePlace} disabled={loading} className="ripple flex-1 py-4 rounded-full bg-brand-tan text-white font-body font-bold uppercase tracking-widest text-sm hover:bg-brand-tanDark active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60">
-                                        {loading ? <><Loader2 size={16} className="animate-spin"/> Placing…</> : <>Place order · ₹{total}</>}
+                                        {loading ? <><Loader2 size={16} className="animate-spin"/> Placing…</> : <>Place order · ₹{grandTotal}</>}
                                     </button>
                                 </div>
                             )}
