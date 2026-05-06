@@ -84,7 +84,7 @@ export default function CartSheet() {
     const [paymentMethod, setPaymentMethod] = useState('online');
     const [loading, setLoading] = useState(false);
     const [placed, setPlaced] = useState(null);
-
+    const [showInvoice, setShowInvoice] = useState(false);
     const update = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
     const offlineKey = orderType === 'delivery' ? 'cod' : 'counter';
@@ -353,23 +353,51 @@ export default function CartSheet() {
                                 <button data-testid="order-type-dinein-btn" onClick={() => { setOrderType('dine-in'); }} className={`flex items-center justify-center gap-2 py-2 rounded-full font-body font-bold text-xs uppercase tracking-widest transition-all ${orderType==='dine-in'?'bg-brand-ink text-brand-cream':'text-brand-muted'}`}><Store size={14}/> Dine-in</button>
                             </div>
 
-                            {/* Subtotal + Handling */}
-                            {orderType === 'delivery' && handlingCharge > 0 && (
-                                <div className="space-y-1">
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-body text-xs text-brand-muted">Subtotal</span>
-                                        <span className="font-body text-sm text-brand-ink">₹{total}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-body text-xs text-brand-muted">Handling Charge</span>
-                                        <span className="font-body text-sm text-brand-tan">+₹{handlingCharge}</span>
-                                    </div>
-                                </div>
-                            )}
+                           {/* View Details toggle */}
+                            <div className="space-y-2">
+                                <button
+                                    onClick={() => setShowInvoice(p => !p)}
+                                    className="w-full flex items-center justify-between px-4 py-2 rounded-xl bg-brand-cream border border-brand-line"
+                                >
+                                    <span className="font-body text-xs uppercase tracking-widest text-brand-muted">
+                                        {showInvoice ? 'Hide Details' : 'View Details'}
+                                    </span>
+                                    <span className="font-body text-xs text-brand-tan font-bold">
+                                        {showInvoice ? '▲' : '▼'}
+                                    </span>
+                                </button>
 
-                            <div className="flex items-center justify-between">
-                                <span className="font-body text-xs uppercase tracking-widest text-brand-muted">Total</span>
-                                <span data-testid="cart-total" className="font-display text-3xl text-brand-ink">₹{grandTotal}</span>
+                                {showInvoice && (
+                                    <div className="bg-brand-cream rounded-2xl p-4 border border-brand-line space-y-2">
+                                        {items.map((it) => (
+                                            <div key={it.id} className="flex items-center justify-between">
+                                                <span className="font-body text-xs text-brand-muted truncate max-w-[180px]">{it.name} × {it.qty}</span>
+                                                <span className="font-body text-xs text-brand-ink font-bold">₹{it.price * it.qty}</span>
+                                            </div>
+                                        ))}
+                                        <div className="border-t border-brand-line pt-2 space-y-1">
+                                            <div className="flex items-center justify-between">
+                                                <span className="font-body text-xs text-brand-muted">Subtotal</span>
+                                                <span className="font-body text-xs text-brand-ink">₹{total}</span>
+                                            </div>
+                                            {orderType === 'delivery' && (
+                                                <div className="flex items-center justify-between">
+                                                    <span className="font-body text-xs text-brand-muted">Handling Charge</span>
+                                                    {handlingCharge === 0 ? (
+                                                        <span className="font-body text-xs text-green-600 font-bold">FREE</span>
+                                                    ) : (
+                                                        <span className="font-body text-xs text-brand-tan font-bold">+₹{handlingCharge}</span>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="flex items-center justify-between px-1">
+                                    <span className="font-body text-xs uppercase tracking-widest text-brand-muted">Total</span>
+                                    <span data-testid="cart-total" className="font-display text-3xl text-brand-ink">₹{grandTotal}</span>
+                                </div>
                             </div>
 
                             {step === 'cart' ? (
