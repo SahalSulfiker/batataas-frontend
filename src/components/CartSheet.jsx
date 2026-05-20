@@ -293,6 +293,7 @@ export default function CartSheet() {
                                             {BRANCH_OPTIONS.map((b) => (
                                                 <option key={b.id} value={b.id}>{b.label}</option>
                                             ))}
+                                           <option value="" disabled>Thiruvaly · No online orders</option>
                                             <option value="" disabled>Dubai · Coming soon</option>
                                         </select>
                                     </div>
