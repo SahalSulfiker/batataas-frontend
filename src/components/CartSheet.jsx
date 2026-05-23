@@ -76,7 +76,12 @@ function HandlingChargeBar({ subtotal }) {
         </div>
     );
 }
-
+function isStoreOpen() {
+    const now = new Date();
+    const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const hour = ist.getHours();
+    return hour >= 15 && hour < 24;
+}
 export default function CartSheet() {
     const { items, inc, dec, remove, clear, total, count, orderType, setOrderType, isOpen, setIsOpen } = useCart();
     const [step, setStep] = useState('cart');
@@ -402,9 +407,15 @@ export default function CartSheet() {
                             </div>
 
                             {step === 'cart' ? (
+                            isStoreOpen() ? (
                                 <button data-testid="proceed-to-checkout-btn" onClick={() => setStep('details')} className="ripple w-full py-4 rounded-full bg-brand-tan text-white font-body font-bold uppercase tracking-widest text-sm hover:bg-brand-tanDark active:scale-[0.98] transition-all">
                                     Proceed to Checkout
                                 </button>
+                            ) : (
+                                <div className="w-full py-4 rounded-full bg-brand-ink/10 text-brand-ink font-body font-bold uppercase tracking-widest text-sm text-center">
+                                    🕒 We're Closed · Open 3 PM – 12 AM
+                                </div>
+                            )
                             ) : (
                                 <div className="flex gap-2">
                                     <button data-testid="back-to-cart-btn" onClick={() => setStep('cart')} className="px-5 py-4 rounded-full bg-brand-cream text-brand-ink font-body font-bold uppercase tracking-widest text-xs border border-brand-line">Back</button>
