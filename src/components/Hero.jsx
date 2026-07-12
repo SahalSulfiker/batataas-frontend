@@ -69,7 +69,7 @@ export default function Hero() {
                         <a
                             href="#menu"
                             data-testid="hero-explore-menu-btn"
-                            className="ripple inline-flex items-center gap-1.5 md:gap-2 px-4 sm:px-5 md:px-7 py-2.5 md:py-4 rounded-full bg-transparent text-brand-ink font-body font-bold uppercase tracking-wider md:tracking-widest text-[10px] md:text-[12px] border border-brand-ink/20 hover:border-brand-tan hover:text-brand-tan active:scale-95 transition-all"
+                          className="ripple inline-flex items-center gap-1.5 md:gap-2 px-4 sm:px-5 md:px-7 py-2.5 md:py-4 rounded-full bg-brand-red text-white font-body font-bold uppercase tracking-wider md:tracking-widest text-[10px] md:text-[12px] hover:bg-red-700 active:scale-95 transition-all shadow-[0_10px_30px_rgba(194,24,7,0.3)]"
                         >
                             <UtensilsCrossed size={14} /> Explore
                         </a>
