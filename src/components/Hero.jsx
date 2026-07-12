@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, UtensilsCrossed } from 'lucide-react';
+import SpinWin from './SpinWin';
 
 const SLIDES = [
     {
@@ -74,6 +75,11 @@ export default function Hero() {
                         </a>
                     </div>
 
+                    {/* Spin & Win Button */}
+                    <div className="mt-3 md:mt-5">
+                        <SpinWin />
+                    </div>
+
                     {/* Trust row */}
                     <div className="mt-5 md:mt-10 flex items-center gap-3 sm:gap-5 md:gap-10">
                         <div>
@@ -127,7 +133,7 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    {/* Made-to-order chip — hidden on small mobile */}
+                    {/* Made-to-order chip */}
                     <div className="hidden sm:flex absolute -top-3 -left-3 md:-top-4 md:-left-4 items-center gap-2 bg-white rounded-full pl-2 pr-3 md:pr-4 py-1.5 md:py-2 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
                         <span className="h-5 w-5 md:h-7 md:w-7 rounded-full bg-brand-tan grid place-items-center">
                             <span className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-white animate-pulse" />
