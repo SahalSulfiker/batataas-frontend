@@ -5,14 +5,12 @@ const PIN = '0420';
 const MASCOT = '/images/mascot.png';
 
 const PRIZES = [
-    { label: '20% Off', color: '#C21807', text: '#fff', weight: 1 },
-    { label: 'Better Luck\nNext Time', color: '#1a1a1c', text: '#fff', weight: 4 },
-    { label: 'Free Mojito', color: '#C98A4B', text: '#fff', weight: 2 },
-    { label: 'Better Luck\nNext Time', color: '#1a1a1c', text: '#fff', weight: 4 },
-    { label: 'Free Fresh\nLime', color: '#C21807', text: '#fff', weight: 2 },
-    { label: 'Better Luck\nNext Time', color: '#1a1a1c', text: '#fff', weight: 4 },
-    { label: '10% Off\nNext Order', color: '#C98A4B', text: '#fff', weight: 2 },
-    { label: 'Better Luck\nNext Time', color: '#1a1a1c', text: '#fff', weight: 4 },
+    { label: '20% Off', color: '#C21807', text: '#fff', weight: 2 },
+    { label: '2 Piece Wings', color: '#C98A4B', text: '#fff', weight: 2 },
+    { label: 'Free Mojito', color: '#C21807', text: '#fff', weight: 2 },
+    { label: 'Free Fresh\nLime', color: '#C98A4B', text: '#fff', weight: 2 },
+    { label: '10% Off\nNext Order', color: '#C21807', text: '#fff', weight: 2 },
+    { label: 'Exotic French Fries', color: '#C98A4B', text: '#fff', weight: 2 },
 ];
 
 const SEGMENT_ANGLE = 360 / PRIZES.length;
@@ -190,10 +188,6 @@ function SpinWheel({ onClose }) {
                             </>
                         ) : (
                             <>
-                                <div className="text-4xl mb-2">😔</div>
-                                <h3 className="font-display uppercase text-3xl text-white tracking-wide mb-3">
-                                    Better Luck Next Time!
-                                </h3>
                                 <p className="font-body text-sm text-white/60 mb-6">
                                     Thank you for participating. Come back with your next order!
                                 </p>
@@ -328,7 +322,7 @@ function RulesModal({ onParticipate, onClose }) {
                             onClick={onParticipate}
                             className="w-full py-3.5 rounded-full bg-brand-red text-white font-body font-bold uppercase tracking-widest text-sm hover:bg-red-700 active:scale-95 transition-all shadow-[0_10px_30px_rgba(194,24,7,0.3)]"
                         >
-                            🎰 Participate Now
+                            Participate Now
                         </button>
                         <button
                             onClick={onClose}
@@ -356,7 +350,7 @@ export default function SpinWin() {
                 onClick={() => setStep('rules')}
                 className="ripple inline-flex items-center gap-2 px-5 md:px-7 py-2.5 md:py-4 rounded-full bg-brand-red text-white font-body font-bold uppercase tracking-widest text-[10px] md:text-[12px] hover:bg-red-700 active:scale-95 transition-all shadow-[0_10px_30px_rgba(194,24,7,0.4)]"
             >
-                🎰 Spin & Win
+                 Spin & Win
             </button>
 
             {step === 'rules' && (
