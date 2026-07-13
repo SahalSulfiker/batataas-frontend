@@ -357,10 +357,10 @@ export default function SpinWin() {
     const [customer, setCustomer] = useState(null);
     return (
         <>
-            <button onClick={() => setStep('rules')}
-    className="ripple inline-flex items-center gap-2 px-5 md:px-7 py-2.5 md:py-4 rounded-full text-white font-body font-bold uppercase tracking-widest text-[10px] md:text-[12px] active:scale-95 transition-all"
+          <button onClick={() => setStep('rules')}
+    className="ripple inline-flex items-center gap-2 px-8 md:px-14 py-2.5 md:py-4 rounded-full text-white font-body font-bold uppercase tracking-widest text-[10px] md:text-[12px] active:scale-95 transition-all"
     style={{ background: '#C21807', boxShadow: '0 10px 30px rgba(194,24,7,0.4)' }}>
-    🎰 Spin & Win
+    Spin & Win
 </button>
             {step === 'rules' && <RulesModal onParticipate={() => setStep('info')} onClose={() => setStep(null)} />}
             {step === 'info' && <CustomerInfoModal onNext={(data) => { setCustomer(data); setStep('pin'); }} onBack={(close) => setStep(close ? null : 'rules')} />}
