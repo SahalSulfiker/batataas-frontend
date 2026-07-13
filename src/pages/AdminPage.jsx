@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { LogIn, LogOut, RefreshCcw, Phone, MapPin, Package, Loader2, CheckCircle2, XCircle, DollarSign } from 'lucide-react';
+import { LogIn, LogOut, RefreshCcw, Phone, MapPin, Package, Loader2, CheckCircle2, XCircle, DollarSign, Gift } from 'lucide-react';
 
 const BACKEND = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND}/api`;
@@ -17,16 +17,15 @@ const STATUS_COLORS = {
 
 const STATUS_OPTIONS = ['pending', 'confirmed', 'preparing', 'ready', 'delivered', 'cancelled'];
 
-
 export default function AdminPage() {
     const [token, setToken] = useState(() => localStorage.getItem('batatas_admin_token') || '');
     const [pwd, setPwd] = useState('');
     const [orders, setOrders] = useState([]);
+    const [spinResults, setSpinResults] = useState([]);
     const [stats, setStats] = useState({ total_orders: 0, pending_orders: 0, today_orders: 0 });
     const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState('all');
     const [activeTab, setActiveTab] = useState('orders');
-   
 
     const headers = { 'X-Admin-Password': token };
 
@@ -49,6 +48,7 @@ export default function AdminPage() {
         localStorage.removeItem('batatas_admin_token');
         setToken('');
         setOrders([]);
+        setSpinResults([]);
     };
 
     const refresh = useCallback(async () => {
@@ -73,6 +73,16 @@ export default function AdminPage() {
         }
     }, [token]);
 
+    const fetchSpinResults = useCallback(async () => {
+        if (!token) return;
+        try {
+            const r = await axios.get(`${API}/admin/spin-results`, { headers: { 'X-Admin-Password': token } });
+            setSpinResults(r.data.results || []);
+        } catch (err) {
+            console.error('Failed to load spin results');
+        }
+    }, [token]);
+
     const updateStatus = async (id, status) => {
         try {
             await axios.patch(`${API}/admin/orders/${id}`, { status }, { headers });
@@ -89,7 +99,6 @@ export default function AdminPage() {
             toast.success('Payment marked as received');
             refresh();
         } catch (err) {
-            // Fallback — update locally
             setOrders(prev => prev.map(o => o.id === id ? { ...o, payment_status: 'received' } : o));
             toast.success('Payment marked as received');
         }
@@ -98,30 +107,25 @@ export default function AdminPage() {
     useEffect(() => {
         if (token) {
             refresh();
-            const t = setInterval(refresh, 15000);
+            fetchSpinResults();
+            const t = setInterval(() => { refresh(); fetchSpinResults(); }, 15000);
             return () => clearInterval(t);
         }
-    }, [token, refresh]);
+    }, [token, refresh, fetchSpinResults]);
 
     const visible = filter === 'all' ? orders : orders.filter((o) => o.status === filter);
 
     const getPaymentBadge = (o) => {
         if (o.payment_method === 'online') {
-            if (o.payment_status === 'received') {
-                return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-100 text-green-800"><CheckCircle2 size={11}/> Paid</span>;
-            }
+            if (o.payment_status === 'received') return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-100 text-green-800"><CheckCircle2 size={11}/> Paid</span>;
             return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-red-100 text-red-800"><XCircle size={11}/> Awaiting Payment</span>;
         }
         if (o.payment_method === 'cod') {
-            if (o.payment_status === 'received') {
-                return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-100 text-green-800"><CheckCircle2 size={11}/> COD Received</span>;
-            }
+            if (o.payment_status === 'received') return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-100 text-green-800"><CheckCircle2 size={11}/> COD Received</span>;
             return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-amber-100 text-amber-800">COD Pending</span>;
         }
         if (o.payment_method === 'counter') {
-            if (o.payment_status === 'received') {
-                return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-100 text-green-800"><CheckCircle2 size={11}/> Counter Received</span>;
-            }
+            if (o.payment_status === 'received') return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-100 text-green-800"><CheckCircle2 size={11}/> Counter Received</span>;
             return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest font-bold bg-amber-100 text-amber-800">Counter Pending</span>;
         }
         return null;
@@ -135,20 +139,11 @@ export default function AdminPage() {
                     <h1 className="font-display uppercase text-3xl tracking-wide text-brand-ink">Batatas HQ</h1>
                     <p className="mt-2 font-body text-sm text-brand-muted">Sign in to view orders.</p>
                     <label className="block mt-6 font-body text-xs uppercase tracking-widest text-brand-muted">Password</label>
-                    <input
-                        type="password"
-                        data-testid="admin-password-input"
-                        autoFocus
-                        value={pwd}
-                        onChange={(e) => setPwd(e.target.value)}
+                    <input type="password" data-testid="admin-password-input" autoFocus value={pwd} onChange={(e) => setPwd(e.target.value)}
                         className="mt-2 w-full bg-brand-cream rounded-xl border border-brand-line px-4 py-3 font-body focus:border-brand-tan outline-none"
-                        placeholder="Enter admin password"
-                    />
-                    <button
-                        type="submit"
-                        data-testid="admin-login-btn"
-                        className="mt-5 w-full py-3 rounded-full bg-brand-tan text-white font-body font-bold uppercase tracking-widest text-sm hover:bg-brand-tanDark active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2"
-                    >
+                        placeholder="Enter admin password" />
+                    <button type="submit" data-testid="admin-login-btn"
+                        className="mt-5 w-full py-3 rounded-full bg-brand-tan text-white font-body font-bold uppercase tracking-widest text-sm hover:bg-brand-tanDark active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2">
                         <LogIn size={15} /> Sign in
                     </button>
                 </form>
@@ -193,6 +188,9 @@ export default function AdminPage() {
                     <button onClick={() => setActiveTab('orders')} className={`px-5 py-2 rounded-full font-body text-xs uppercase tracking-widest font-bold border transition-all ${activeTab === 'orders' ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}>
                         Orders
                     </button>
+                    <button onClick={() => { setActiveTab('spin'); fetchSpinResults(); }} className={`px-5 py-2 rounded-full font-body text-xs uppercase tracking-widest font-bold border transition-all ${activeTab === 'spin' ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}>
+                        🎰 Spin Results
+                    </button>
                 </div>
 
                 {/* ORDERS TAB */}
@@ -200,12 +198,8 @@ export default function AdminPage() {
                     <>
                         <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6">
                             {['all', ...STATUS_OPTIONS].map((s) => (
-                                <button
-                                    key={s}
-                                    onClick={() => setFilter(s)}
-                                    data-testid={`admin-filter-${s}`}
-                                    className={`whitespace-nowrap px-4 py-2 rounded-full font-body text-[11px] uppercase tracking-widest font-bold border transition-all ${filter === s ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}
-                                >
+                                <button key={s} onClick={() => setFilter(s)} data-testid={`admin-filter-${s}`}
+                                    className={`whitespace-nowrap px-4 py-2 rounded-full font-body text-[11px] uppercase tracking-widest font-bold border transition-all ${filter === s ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan'}`}>
                                     {s}
                                 </button>
                             ))}
@@ -252,7 +246,6 @@ export default function AdminPage() {
                                                     ))}
                                                 </ul>
                                             </div>
-
                                             {o.customer_address && (
                                                 <div>
                                                     <div className="font-body text-[10px] uppercase tracking-widest text-brand-muted">Delivery address</div>
@@ -265,8 +258,6 @@ export default function AdminPage() {
                                                     <div className="font-body text-sm text-brand-ink">{o.notes}</div>
                                                 </div>
                                             )}
-
-                                            {/* Payment section */}
                                             <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-brand-line">
                                                 <div className="w-full flex items-center justify-between">
                                                     <div className="flex items-center gap-2">
@@ -274,26 +265,18 @@ export default function AdminPage() {
                                                         {getPaymentBadge(o)}
                                                     </div>
                                                     {o.payment_status !== 'received' && o.payment_method !== 'online' && (
-                                                        <button
-                                                            onClick={() => markPaymentReceived(o.id)}
-                                                            className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-600 text-white hover:bg-green-700 transition-colors"
-                                                        >
+                                                        <button onClick={() => markPaymentReceived(o.id)}
+                                                            className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold bg-green-600 text-white hover:bg-green-700 transition-colors">
                                                             <DollarSign size={11}/> Mark as Received
                                                         </button>
                                                     )}
                                                 </div>
                                             </div>
-
-                                            {/* Status actions */}
                                             <div className="flex flex-wrap items-center gap-2 pt-1">
                                                 <span className="font-body text-[10px] uppercase tracking-widest text-brand-muted mr-1">Set status:</span>
                                                 {STATUS_OPTIONS.map((s) => (
-                                                    <button
-                                                        key={s}
-                                                        data-testid={`set-status-${s}-${o.short_id}`}
-                                                        onClick={() => updateStatus(o.id, s)}
-                                                        className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold border transition-all ${o.status === s ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan hover:text-brand-tan'}`}
-                                                    >
+                                                    <button key={s} data-testid={`set-status-${s}-${o.short_id}`} onClick={() => updateStatus(o.id, s)}
+                                                        className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold border transition-all ${o.status === s ? 'bg-brand-ink text-brand-cream border-brand-ink' : 'bg-white text-brand-muted border-brand-line hover:border-brand-tan hover:text-brand-tan'}`}>
                                                         {s}
                                                     </button>
                                                 ))}
@@ -306,6 +289,67 @@ export default function AdminPage() {
                     </>
                 )}
 
+                {/* SPIN RESULTS TAB */}
+                {activeTab === 'spin' && (
+                    <div>
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 className="font-display uppercase text-2xl text-brand-ink">Spin & Win Results</h3>
+                                <p className="font-body text-xs text-brand-muted mt-0.5">{spinResults.length} total entries</p>
+                            </div>
+                            <button onClick={fetchSpinResults} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-ink text-brand-cream text-xs uppercase tracking-widest font-bold hover:bg-brand-tan transition-colors">
+                                <RefreshCcw size={13}/> Refresh
+                            </button>
+                        </div>
+
+                        {spinResults.length === 0 ? (
+                            <div className="bg-white rounded-2xl border border-brand-line p-12 text-center">
+                                <Gift className="mx-auto text-brand-tan mb-3" size={32} />
+                                <div className="font-display uppercase text-xl">No spin results yet</div>
+                                <p className="font-body text-sm text-brand-muted mt-1">Results will appear here after customers spin.</p>
+                            </div>
+                        ) : (
+                            <div className="bg-white rounded-2xl border border-brand-line overflow-hidden">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr className="bg-brand-cream border-b border-brand-line">
+                                                <th className="text-left px-4 py-3 font-body text-[11px] uppercase tracking-widest text-brand-muted">Name</th>
+                                                <th className="text-left px-4 py-3 font-body text-[11px] uppercase tracking-widest text-brand-muted">Phone</th>
+                                                <th className="text-left px-4 py-3 font-body text-[11px] uppercase tracking-widest text-brand-muted">Branch</th>
+                                                <th className="text-left px-4 py-3 font-body text-[11px] uppercase tracking-widest text-brand-muted">Prize</th>
+                                                <th className="text-left px-4 py-3 font-body text-[11px] uppercase tracking-widest text-brand-muted">Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-brand-line">
+                                            {spinResults.map((r) => (
+                                                <tr key={r.id} className="hover:bg-brand-cream/40 transition-colors">
+                                                    <td className="px-4 py-3 font-body text-sm text-brand-ink font-bold">{r.name}</td>
+                                                    <td className="px-4 py-3 font-body text-sm text-brand-muted">
+                                                        <a href={`tel:${r.phone}`} className="hover:text-brand-tan transition-colors">{r.phone}</a>
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <span className="px-2 py-1 rounded-full bg-brand-cream font-body text-xs font-bold uppercase tracking-widest text-brand-ink">{r.branch}</span>
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <span className={`px-2 py-1 rounded-full font-body text-xs font-bold ${
+                                                            r.prize.includes('Luck') ? 'bg-gray-100 text-gray-500' : 'bg-green-100 text-green-800'
+                                                        }`}>
+                                                            {r.prize.includes('Luck') ? '😔 Better Luck' : `🎉 ${r.prize}`}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-3 font-body text-xs text-brand-muted">
+                                                        {new Date(r.created_at).toLocaleString()}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
