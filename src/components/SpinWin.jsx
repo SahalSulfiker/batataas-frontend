@@ -308,12 +308,13 @@ function PinModal({ onSuccess, onBack }) {
 
 function RulesModal({ onParticipate, onClose }) {
     const RULES = [
-        'Valid on every order above ₹400.',
-        'Our staff will enter the secret PIN to unlock your spin.',
-        'Offer must be redeemed on the same bill you became eligible on.',
-        'You must participate in the presence of our staff.',
-        'Only 1 attempt per person.',
-    ];
+    'Valid on every order above ₹400.',
+    'Offer only available for dine-in. Not applicable on delivery orders.',
+    'Our staff will enter the secret PIN to unlock your spin.',
+    'Offer must be redeemed on the same bill you became eligible on.',
+    'You must participate in the presence of our staff.',
+    'Only 1 attempt per person.',
+];
     return (
         <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm">
             <div className="relative w-full max-w-sm bg-brand-cream rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl overflow-hidden">
@@ -357,9 +358,10 @@ export default function SpinWin() {
     return (
         <>
             <button onClick={() => setStep('rules')}
-                className="ripple inline-flex items-center gap-2 px-5 md:px-7 py-2.5 md:py-4 rounded-full bg-brand-red text-white font-body font-bold uppercase tracking-widest text-[10px] md:text-[12px] hover:bg-red-700 active:scale-95 transition-all shadow-[0_10px_30px_rgba(194,24,7,0.4)]">
-                🎰 Spin & Win
-            </button>
+    className="ripple inline-flex items-center gap-2 px-5 md:px-7 py-2.5 md:py-4 rounded-full text-white font-body font-bold uppercase tracking-widest text-[10px] md:text-[12px] active:scale-95 transition-all"
+    style={{ background: '#C21807', boxShadow: '0 10px 30px rgba(194,24,7,0.4)' }}>
+    🎰 Spin & Win
+</button>
             {step === 'rules' && <RulesModal onParticipate={() => setStep('info')} onClose={() => setStep(null)} />}
             {step === 'info' && <CustomerInfoModal onNext={(data) => { setCustomer(data); setStep('pin'); }} onBack={(close) => setStep(close ? null : 'rules')} />}
             {step === 'pin' && <PinModal onSuccess={() => setStep('wheel')} onBack={(close) => setStep(close ? null : 'info')} />}
