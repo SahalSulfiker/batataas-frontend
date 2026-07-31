@@ -8,7 +8,7 @@ const BRANCHES = ['Manjeri', 'Wandoor', 'Thiruvali'];
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const PRIZES = [
-    { label: '20% Off', color: '#C21807', text: '#fff', weight: 2 },
+    { label: '5% Off', color: '#C21807', text: '#fff', weight: 2 },
     { label: '2 Piece Wings', color: '#C98A4B', text: '#fff', weight: 2 },
     { label: 'Free Mojito', color: '#C21807', text: '#fff', weight: 2 },
     { label: 'Free Fresh\nLime', color: '#C98A4B', text: '#fff', weight: 2 },
