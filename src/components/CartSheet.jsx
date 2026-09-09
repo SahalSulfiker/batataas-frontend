@@ -10,7 +10,6 @@ const API = `${BACKEND}/api`;
 
 const BRANCH_OPTIONS = [
     { id: 'wandoor', label: 'Wandoor · Opp CH Button House' },
-    { id: 'manjeri', label: 'Manjeri · KP Tower, Thurakkal Bypass' },
 ];
 
 function loadRazorpayScript() {
@@ -298,8 +297,9 @@ export default function CartSheet() {
                                             {BRANCH_OPTIONS.map((b) => (
                                                 <option key={b.id} value={b.id}>{b.label}</option>
                                             ))}
-                                           <option value="" disabled>Thiruvaly · No online orders</option>
-                                            <option value="" disabled>Dubai · Coming soon</option>
+                                        <option value="" disabled>Manjeri · Temporarily Closed</option>
+                                        <option value="" disabled>Thiruvaly · No online orders</option>
+                                        <option value="" disabled>Dubai · Coming soon</option>
                                         </select>
                                     </div>
                                     {orderType === 'delivery' && (

@@ -57,12 +57,7 @@ export default function Header() {
 
                     <div className="flex items-center gap-2 md:gap-3">
                         <a
-                            href="tel:+918111980269"
-                            data-testid="call-manjeri-btn"
-                            className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-brand-tan text-white text-[11px] font-bold uppercase tracking-wider hover:bg-brand-tanDark transition-colors"
-                        >
-                            <Phone size={13} /> Manjeri
-                        </a>
+                            href="tel:+918111980269" className="px-5 py-3 rounded-full bg-brand-tan text-white font-bold flex items-center gap-2"><Phone size={16}/> Manjeri · +91 81119 80269</a>
                         <a
                             href="tel:+919061160269"
                             data-testid="call-wandoor-btn"

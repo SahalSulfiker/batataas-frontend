@@ -23,17 +23,20 @@ export default function Branches({ branches }) {
                     {(branches || []).map((b) => {
                         const soon = b.status === 'coming_soon';
                         const noOnline = b.status === 'no_online_orders';
+                        const tempClosed = b.status === 'temporarily_closed';
                         return (
                             <div
                                 key={b.id}
                                 data-testid={`branch-card-${b.id}`}
-                                className={`group relative rounded-3xl p-6 border transition-all duration-500 hover:-translate-y-2 ${
-    soon
-        ? 'bg-brand-brown/30 border-brand-yellow/20'
-        : noOnline
-        ? 'bg-white/5 border-brand-red/30 hover:bg-white/10 hover:border-brand-red'
-        : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-brand-yellow'
-}`}
+                               className={`group relative rounded-3xl p-6 border transition-all duration-500 hover:-translate-y-2 ${
+                                soon
+                                    ? 'bg-brand-brown/30 border-brand-yellow/20'
+                                    : noOnline
+                                    ? 'bg-white/5 border-brand-red/30 hover:bg-white/10 hover:border-brand-red'
+                                    : tempClosed
+                                    ? 'bg-white/5 border-amber-500/30 hover:bg-white/10 hover:border-amber-500'
+                                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-brand-yellow'
+                            }`}
                             >
                                 <div className="flex items-start justify-between">
                                     <div className="h-11 w-11 rounded-full bg-brand-red grid place-items-center text-brand-cream">
@@ -44,9 +47,9 @@ export default function Branches({ branches }) {
         <Clock size={10} className="inline mr-1 -mt-0.5" /> Soon
     </span>
 )}
-{noOnline && (
-    <span className="px-2.5 py-1 rounded-full bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest">
-        No Online Orders
+{tempClosed && (
+    <span className="px-2.5 py-1 rounded-full bg-amber-500 text-white text-[10px] font-bold uppercase tracking-widest">
+        Temporarily Closed
     </span>
 )}
                                 </div>
