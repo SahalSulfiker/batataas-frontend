@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Phone, Instagram, Menu as MenuIcon, X } from 'lucide-react';
+import { Instagram, Menu as MenuIcon, X } from 'lucide-react';
 
 const LOGO = '/logo.png';
 
@@ -9,13 +9,6 @@ const NAV = [
     { label: 'About', href: '#about' },
     { label: 'Branches', href: '#branches' },
     { label: 'Contact', href: '#contact' },
-];
-
-const CALLS = [
-    { name: 'Wandoor', tel: '+919061160269', display: '+91 90611 60269',primary: true  },
-    { name: 'Manjeri', tel: '+918111980269', display: '+91 81119 80269'},
-    { name: 'Thiruvaly', tel: '+916239100700', display: '+91 62391 00700' },
-    { name: 'Pulikkalody', tel: '+917025222260', display: '+91 70252 22260' },
 ];
 
 export default function Header() {
@@ -63,20 +56,6 @@ export default function Header() {
                     </nav>
 
                     <div className="flex items-center gap-2 md:gap-3">
-                        {CALLS.map((c) => (
-                            <a
-                                key={c.name}
-                                href={`tel:${c.tel}`}
-                                data-testid={`call-${c.name.toLowerCase()}-btn`}
-                                className={`hidden xl:inline-flex items-center gap-2 px-3 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider transition-colors ${
-                                    c.primary
-                                        ? 'bg-brand-tan text-white hover:bg-brand-tanDark'
-                                        : 'bg-white border border-brand-ink/15 text-brand-ink hover:border-brand-tan hover:text-brand-tan'
-                                }`}
-                            >
-                                <Phone size={13} /> {c.name}
-                            </a>
-                        ))}
                         <a
                             href="https://instagram.com/bataatas.in"
                             target="_blank"
@@ -123,21 +102,6 @@ export default function Header() {
                             {n.label}
                         </a>
                     ))}
-                    <div className="mt-8 flex flex-col gap-3 w-full">
-                        {CALLS.map((c) => (
-                            <a
-                                key={c.name}
-                                href={`tel:${c.tel}`}
-                                className={`px-5 py-3 rounded-full font-bold flex items-center gap-2 ${
-                                    c.primary
-                                        ? 'bg-brand-tan text-white'
-                                        : 'bg-white border border-brand-line text-brand-ink'
-                                }`}
-                            >
-                                <Phone size={16} /> {c.name} · {c.display}
-                            </a>
-                        ))}
-                    </div>
                 </div>
             </div>
         </>
