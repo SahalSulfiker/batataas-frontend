@@ -4,6 +4,11 @@ import SpinWin from './SpinWin';
 
 const SLIDES = [
     {
+        img: '/images/hell-fire-combo.jpg',
+        label: 'Hell Fire Combo',
+        price: '₹399',
+    },
+    {
         img: 'https://images.pexels.com/photos/20535803/pexels-photo-20535803.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1200&w=1400',
         label: 'Chicken Loaded Fries',
         price: '₹180',
@@ -17,11 +22,6 @@ const SLIDES = [
         img: 'https://images.pexels.com/photos/36741809/pexels-photo-36741809.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1200&w=1400',
         label: 'Beef Smash Burger',
         price: '₹170',
-    },
-    {
-        img: 'https://images.pexels.com/photos/7491891/pexels-photo-7491891.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1200&w=1400',
-        label: 'House Mojitos',
-        price: '₹90',
     },
 ];
 
