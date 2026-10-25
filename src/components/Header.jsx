@@ -11,6 +11,13 @@ const NAV = [
     { label: 'Contact', href: '#contact' },
 ];
 
+const CALLS = [
+    { name: 'Wandoor', tel: '+919061160269', display: '+91 90611 60269',primary: true  },
+    { name: 'Manjeri', tel: '+918111980269', display: '+91 81119 80269'},
+    { name: 'Thiruvaly', tel: '+916239100700', display: '+91 62391 00700' },
+    { name: 'Pulikkalody', tel: '+917025222260', display: '+91 70252 22260' },
+];
+
 export default function Header() {
     const [scrolled, setScrolled] = useState(false);
     const [open, setOpen] = useState(false);
@@ -56,26 +63,20 @@ export default function Header() {
                     </nav>
 
                     <div className="flex items-center gap-2 md:gap-3">
-                        <a
-                            href="tel:+918111980269"
-                            data-testid="call-manjeri-btn"
-                            className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-brand-tan text-white text-[11px] font-bold uppercase tracking-wider hover:bg-brand-tanDark transition-colors"
-                        >
-                            <Phone size={13} /> Manjeri
-                        </a>
-                        <a
-                            href="tel:+919061160269"
-                            data-testid="call-wandoor-btn"
-                            className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white border border-brand-ink/15 text-brand-ink text-[11px] font-bold uppercase tracking-wider hover:border-brand-tan hover:text-brand-tan transition-colors"
-                        >
-                            <Phone size={13} /> Wandoor
-                        </a>
-                        <a
-                        href="tel:+916239100700"
-    className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white border border-brand-ink/15 text-brand-ink text-[11px] font-bold uppercase tracking-wider hover:border-brand-tan hover:text-brand-tan transition-colors"
->
-    <Phone size={13} /> Thiruvaly
-</a>
+                        {CALLS.map((c) => (
+                            <a
+                                key={c.name}
+                                href={`tel:${c.tel}`}
+                                data-testid={`call-${c.name.toLowerCase()}-btn`}
+                                className={`hidden xl:inline-flex items-center gap-2 px-3 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider transition-colors ${
+                                    c.primary
+                                        ? 'bg-brand-tan text-white hover:bg-brand-tanDark'
+                                        : 'bg-white border border-brand-ink/15 text-brand-ink hover:border-brand-tan hover:text-brand-tan'
+                                }`}
+                            >
+                                <Phone size={13} /> {c.name}
+                            </a>
+                        ))}
                         <a
                             href="https://instagram.com/bataatas.in"
                             target="_blank"
@@ -123,9 +124,19 @@ export default function Header() {
                         </a>
                     ))}
                     <div className="mt-8 flex flex-col gap-3 w-full">
-                        <a href="tel:+918111980269" className="px-5 py-3 rounded-full bg-brand-tan text-white font-bold flex items-center gap-2"><Phone size={16}/> Manjeri · +91 81119 80269</a>
-                        <a href="tel:+919061160269" className="px-5 py-3 rounded-full bg-white border border-brand-line text-brand-ink font-bold flex items-center gap-2"><Phone size={16}/> Wandoor · +91 90611 60269</a>
-                        <a href="tel:+916239100700" className="px-5 py-3 rounded-full bg-white border border-brand-line text-brand-ink font-bold flex items-center gap-2"><Phone size={16}/> Thiruvaly · +91 62391 00700</a>
+                        {CALLS.map((c) => (
+                            <a
+                                key={c.name}
+                                href={`tel:${c.tel}`}
+                                className={`px-5 py-3 rounded-full font-bold flex items-center gap-2 ${
+                                    c.primary
+                                        ? 'bg-brand-tan text-white'
+                                        : 'bg-white border border-brand-line text-brand-ink'
+                                }`}
+                            >
+                                <Phone size={16} /> {c.name} · {c.display}
+                            </a>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -340,6 +340,7 @@ export default function CartSheet() {
                                             ))}
                                         <option value="" disabled>Manjeri · Temporarily Closed</option>
                                         <option value="" disabled>Thiruvaly · No online orders</option>
+                                        <option value="" disabled>Pulikkalody · No online orders</option>
                                         <option value="" disabled>Dubai · Coming soon</option>
                                         </select>
                                     </div>
