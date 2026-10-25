@@ -12,6 +12,8 @@ const BRANCH_OPTIONS = [
     { id: 'wandoor', label: 'Wandoor · Opp CH Button House' },
 ];
 
+const SAVER_SHOT = { id: 'saver-shot', name: 'Saver Shot', price: 10, image: '/images/saver-shot.jpg' };
+
 function loadRazorpayScript() {
     return new Promise((resolve) => {
         if (document.getElementById('razorpay-script')) { resolve(true); return; }
@@ -75,6 +77,28 @@ function HandlingChargeBar({ subtotal }) {
         </div>
     );
 }
+
+function SaverShotUpsell({ onAdd }) {
+    return (
+        <div data-testid="saver-shot-upsell" className="flex items-center gap-3 bg-white rounded-2xl p-3 border-2 border-dashed border-brand-tan">
+            <img src={SAVER_SHOT.image} alt={SAVER_SHOT.name} className="h-16 w-16 rounded-xl object-cover" />
+            <div className="flex-1 min-w-0">
+                <div className="font-display uppercase text-base text-brand-ink">🔥 Cool it down?</div>
+                <p className="font-body text-xs text-brand-muted">
+                    Add a Saver Shot — milk &amp; cardamom — for just <span className="font-bold text-brand-tan">₹{SAVER_SHOT.price}</span>
+                </p>
+            </div>
+            <button
+                data-testid="saver-shot-add-btn"
+                onClick={onAdd}
+                className="shrink-0 px-4 py-2 rounded-full bg-brand-tan text-white font-body font-bold uppercase tracking-widest text-xs hover:bg-brand-tanDark active:scale-[0.98] transition-all"
+            >
+                + Add
+            </button>
+        </div>
+    );
+}
+
 function isStoreOpen() {
     const now = new Date();
     const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
@@ -82,7 +106,7 @@ function isStoreOpen() {
     return hour >= 15 && hour < 24;
 }
 export default function CartSheet() {
-    const { items, inc, dec, remove, clear, total, count, orderType, setOrderType, isOpen, setIsOpen } = useCart();
+    const { items, add, inc, dec, remove, clear, total, count, orderType, setOrderType, isOpen, setIsOpen } = useCart();
     const [step, setStep] = useState('cart');
     const [form, setForm] = useState({ name: '', phone: '', branch: '', address: '', notes: '' });
     const [paymentMethod, setPaymentMethod] = useState('online');
@@ -106,6 +130,18 @@ export default function CartSheet() {
         if (paymentMethod === 'online') return 'online';
         return offlineKey;
     }, [paymentMethod, offlineKey]);
+
+    // Show the Saver Shot offer when Hell Fire is in the cart and Saver Shot is not
+    const showSaverShotUpsell = useMemo(() => {
+        const hasHellFire = items.some((i) => i.id === 'hell-fire');
+        const hasSaverShot = items.some((i) => i.id === 'saver-shot');
+        return hasHellFire && !hasSaverShot;
+    }, [items]);
+
+    const addSaverShot = () => {
+        add(SAVER_SHOT);
+        toast.success('Saver Shot added');
+    };
 
     const reset = () => {
         clear();
@@ -267,6 +303,11 @@ export default function CartSheet() {
                                             <div className="font-display text-brand-ink text-lg self-start">₹{it.price * it.qty}</div>
                                         </div>
                                     ))}
+
+                                    {/* Saver Shot upsell — only when Hell Fire is in the cart */}
+                                    {showSaverShotUpsell && (
+                                        <SaverShotUpsell onAdd={addSaverShot} />
+                                    )}
 
                                     {/* Handling Charge Bar — only for delivery */}
                                     {orderType === 'delivery' && (

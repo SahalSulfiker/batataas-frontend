@@ -7,6 +7,7 @@ export const FALLBACK_MENU = {
             { id: "sausage-loaded", name: "Sausage Loaded Fries", price: 200, desc: "Loaded with juicy sausages, cheese, and smoky sauces.", image: "/images/sausage loaded fries.jpeg" },
             { id: "machos", name: "Machos", price: 210, desc: "Nacho-style loaded fries — cheesy, crunchy, irresistible.", image: "/images/machos.jpeg" },
             { id: "beef-smash-loaded", name: "Smash Beef Loaded Fries", price: 230, desc: "Smashed beef, melted cheese and signature sauce over fries.", image: "/images/beef loaded fries.jpeg" },
+            { id: "hell-fire", name: "Hell Fire", price: 399, desc: "4 spicy Hot Wings + 4 crispy Hot Strips, served with golden, crunchy fries.", image: "/images/hell-fire.jpg" },
         ],
         "Snacks": [
             { id: "exotic-fries", name: "Exotic French Fries", price: 80, desc: "Golden, crispy fries served with your favorite dipping sauce.", image: "/images/exotic french.jpeg" },
@@ -50,6 +51,7 @@ export const FALLBACK_MENU = {
             { id: "peri-seasoning", name: "Peri Peri Seasoning", price: 10, desc: "Extra peri peri punch for your fries.", image: "/images/peri peri seasoning.jpg" },
             { id: "cheese-slice", name: "Cheese Slice", price: 20, desc: "Add a layer of melty cheese.", image: "/images/cheese slice.jpg" },
             { id: "extra-wings", name: "Extra Wings", price: 35, desc: "Two extra peri peri wings on the side.", image: "/images/wings.jpeg" },
+            { id: "saver-shot", name: "Saver Shot", price: 10, desc: "A blend of milk and cardamom.", image: "/images/saver-shot.jpg" },
         ],
     },
 };
