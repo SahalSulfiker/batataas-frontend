@@ -26,58 +26,6 @@ function loadRazorpayScript() {
     });
 }
 
-function getHandlingCharge(subtotal) {
-    if (subtotal >= 500) return 0;
-    if (subtotal >= 350) return 10;
-    if (subtotal >= 200) return 20;
-    return 30;
-}
-
-function getFreeThreshold(subtotal) {
-    if (subtotal >= 500) return 500;
-    if (subtotal >= 350) return 500;
-    if (subtotal >= 200) return 350;
-    return 200;
-}
-
-function HandlingChargeBar({ subtotal }) {
-    const charge = getHandlingCharge(subtotal);
-    const threshold = getFreeThreshold(subtotal);
-    const progress = Math.min((subtotal / 500) * 100, 100);
-    const amountNeeded = 500 - subtotal;
-
-    return (
-        <div className="bg-white rounded-2xl p-4 border border-brand-line space-y-2">
-            {/* Progress bar */}
-            <div className="relative h-3 bg-brand-cream rounded-full overflow-hidden">
-                <div
-                    className="absolute left-0 top-0 h-full rounded-full transition-all duration-500"
-                    style={{
-                        width: `${progress}%`,
-                        background: 'linear-gradient(90deg, #C47B3E, #e09050)',
-                    }}
-                />
-            </div>
-
-            {/* Message */}
-            <div className="flex items-center justify-between">
-                {charge === 0 ? (
-                    <p className="font-body text-xs text-green-600 font-bold">
-                        🎉 You've got FREE Handling!
-                    </p>
-                ) : (
-                    <p className="font-body text-xs text-brand-muted">
-                        Add <span className="font-bold text-brand-tan">₹{500 - subtotal}</span> more for <span className="font-bold text-green-600">FREE Handling</span>
-                    </p>
-                )}
-                <span className={`font-body text-xs font-bold ${charge === 0 ? 'text-green-600' : 'text-brand-tan'}`}>
-                    {charge === 0 ? 'FREE' : `₹${charge} fee`}
-                </span>
-            </div>
-        </div>
-    );
-}
-
 function SaverShotUpsell({ onAdd }) {
     return (
         <div data-testid="saver-shot-upsell" className="flex items-center gap-3 bg-white rounded-2xl p-3 border-2 border-dashed border-brand-tan">
@@ -118,13 +66,6 @@ export default function CartSheet() {
     const offlineKey = orderType === 'delivery' ? 'cod' : 'counter';
     const offlineLabel = orderType === 'delivery' ? 'Cash on Delivery' : 'Pay at Counter';
     const OfflineIcon = orderType === 'delivery' ? Banknote : Wallet;
-
-    const handlingCharge = useMemo(() => {
-        if (orderType !== 'delivery') return 0;
-        return getHandlingCharge(total);
-    }, [total, orderType]);
-
-    const grandTotal = total + handlingCharge;
 
     const effectivePayment = useMemo(() => {
         if (paymentMethod === 'online') return 'online';
@@ -168,7 +109,6 @@ export default function CartSheet() {
                 customer_phone: form.phone,
                 customer_address: form.address,
                 notes: form.notes,
-                handling_charge: handlingCharge,
             });
 
             const order = resp.data;
@@ -308,11 +248,6 @@ export default function CartSheet() {
                                     {showSaverShotUpsell && (
                                         <SaverShotUpsell onAdd={addSaverShot} />
                                     )}
-
-                                    {/* Handling Charge Bar — only for delivery */}
-                                    {orderType === 'delivery' && (
-                                        <HandlingChargeBar subtotal={total} />
-                                    )}
                                 </>
                             )}
 
@@ -428,24 +363,19 @@ export default function CartSheet() {
                                                 <span className="font-body text-xs text-brand-muted">Subtotal</span>
                                                 <span className="font-body text-xs text-brand-ink">₹{total}</span>
                                             </div>
-                                            {orderType === 'delivery' && (
-                                                <div className="flex items-center justify-between">
-                                                    <span className="font-body text-xs text-brand-muted">Handling Charge</span>
-                                                    {handlingCharge === 0 ? (
-                                                        <span className="font-body text-xs text-green-600 font-bold">FREE</span>
-                                                    ) : (
-                                                        <span className="font-body text-xs text-brand-tan font-bold">+₹{handlingCharge}</span>
-                                                    )}
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 )}
 
                                 <div className="flex items-center justify-between px-1">
                                     <span className="font-body text-xs uppercase tracking-widest text-brand-muted">Total</span>
-                                    <span data-testid="cart-total" className="font-display text-3xl text-brand-ink">₹{grandTotal}</span>
+                                    <span data-testid="cart-total" className="font-display text-3xl text-brand-ink">₹{total}</span>
                                 </div>
+                                {orderType === 'delivery' && (
+                                    <p data-testid="delivery-charge-note" className="px-1 -mt-1 font-body text-[11px] text-brand-muted">
+                                         *Delivery charge applicable
+                                    </p>
+                                )}
                             </div>
 
                             {step === 'cart' ? (
@@ -462,7 +392,7 @@ export default function CartSheet() {
                                 <div className="flex gap-2">
                                     <button data-testid="back-to-cart-btn" onClick={() => setStep('cart')} className="px-5 py-4 rounded-full bg-brand-cream text-brand-ink font-body font-bold uppercase tracking-widest text-xs border border-brand-line">Back</button>
                                     <button data-testid="checkout-btn" onClick={handlePlace} disabled={loading} className="ripple flex-1 py-4 rounded-full bg-brand-tan text-white font-body font-bold uppercase tracking-widest text-sm hover:bg-brand-tanDark active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60">
-                                        {loading ? <><Loader2 size={16} className="animate-spin"/> Placing…</> : <>Place order · ₹{grandTotal}</>}
+                                        {loading ? <><Loader2 size={16} className="animate-spin"/> Placing…</> : <>Place order · ₹{total}</>}
                                     </button>
                                 </div>
                             )}
